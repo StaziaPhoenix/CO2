@@ -1,4 +1,5 @@
 #include "Pump.h"
+#include "K30.h"
 
 // Serial CMD
 int input;                 //Initialize serial input
@@ -15,10 +16,14 @@ const int startswitch = 9; //Button pin
 //const int valve2 = 12;     //Pin for Valve 2 control (output valve)
 const int out = 1;         //Set direction out to be 1
 const int in = 0;          //Set direction in to be 0
-int stepSize = 0;     
+int stepSize = 0;
+
+int rx = 12;
+int tx = 13;
 
 Pump pump(3,5,11,12); // Initialize pump object
 //Pump(step_mtr_drv,step_mtr_dir,valve_input_pin,valve_output_pin);
+K30 k30(rx, tx);
 
 /*
 void pump(int steps, boolean dir) {
@@ -95,4 +100,11 @@ void loop() {
       Serial.println("I pumped out");
     }
     delay(200);
+
+    // K30 Stuff
+    k30.sendRequest();
+    unsigned long valCO2 = k30.getValue();
+    Serial.print("Co2 ppm = ");
+    Serial.println(valCO2);
+    delay(2000);
 }

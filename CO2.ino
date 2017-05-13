@@ -1,3 +1,5 @@
+// NOTE:  Need No line ending for prints to line up
+
 #include "Pump.h"
 #include "K30.h"
 
@@ -50,19 +52,29 @@ void pump(int steps, boolean dir) {
 }
 */
 
+// CLI vars
+//byte in_byte=0;
+byte ack=0;
+#define NONE 130
+
 void setup() {
   pinMode(startswitch, INPUT);
 
   Serial.begin(9600);
 
   pump.set_valve_dirs(LOW,LOW);  // Open both input valve and output valve
-  pump.pump(500,out);            //Drain the pump and plumbing
+//  pump.pump(500,out);            //Drain the pump and plumbing
 }
 
 
 void loop() {
-  actuatePump();
-  detect();
+  while(!ack) {
+    ack=get_ack();
+    delay(3000);
+  }
+  do_serial_cmd(get_serial_cmd());
+//  actuatePump();
+//  detect();
 }
 
 void detect() {
@@ -102,5 +114,55 @@ void actuatePump() {
   }
   delay(200);
 
+}
+
+void print_cmd_list() {
+    Serial.print("\nCommands:\r\n");
+    // new commands here
+    Serial.print("\t<h>\tPrint Command List");
+    Serial.println();
+}
+
+void do_serial_cmd(byte cmd) {
+    switch(cmd) {
+        // Add more commands        
+        case('h'):
+          print_cmd_list();
+          print_new_cmd_line();
+          break;
+        case(NONE):
+          break;
+    }
+}
+
+bool get_ack() {
+    Serial.println("\nPress <h> for command list");
+    Serial.print(">");
+    byte in_byte=Serial.read();
+
+    if(in_byte == 'h') {
+      Serial.print((char)in_byte);
+      print_cmd_list();
+      print_new_cmd_line();
+      return true;
+    }
+    return false;
+}
+
+byte get_serial_cmd() {
+  byte in_byte;
+
+  if(Serial.available()) {
+    in_byte=Serial.read();
+    Serial.print((char)in_byte); 
+    return in_byte;
+  } else {
+    return NONE;
+  }
+}
+
+
+void print_new_cmd_line() {
+  Serial.print(">");
 }
 

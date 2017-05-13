@@ -12,7 +12,7 @@ const int startswitch = 9; //Button pin
 
 
 // Valve & Pump
-Pump pump(3,5,11,12); // Initialize pump object
+Pump pump(3,5,11 ,12); // Initialize pump object
 //Pump(step motor/valve drive pin,step motor/valve direction pin,valve1/input-valve pin,valve2/output-valve pin);
 
 int stepSize = 0;     

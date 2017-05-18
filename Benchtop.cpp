@@ -15,7 +15,7 @@
  * @param valve_output_drv output valve driver/control pin (valve2)
  */
 Benchtop::Benchtop() {
-    syringe_rinse_speed=0.0;
+    syringe_rinse_speed=3.3;
     rinse_volume=0.0;
     rinse_time=0.0;
     acid_volume=0.0;
@@ -39,7 +39,7 @@ void Benchtop::set_syringe_rinse_speed(float syringe_rinse_speed) {
 /*
  * Gets the syringe rinse speed         
  */
-float Benchtop::set_syringe_rinse_speed() {
+float Benchtop::get_syringe_rinse_speed() {
     return this->syringe_rinse_speed;
 }
 
@@ -87,7 +87,7 @@ void Benchtop::set_acid_volume(float acid_volume) {
 /*
  * Gets the acid volume
  */
-float Benchtop::get_acid_voume() {
+float Benchtop::get_acid_volume() {
     return this->acid_volume;
 }
 
@@ -119,7 +119,7 @@ void Benchtop::set_sample_volume(float sample_volume) {
 /*
  * Gets the sample volume
  */
-float Benchtop::get_sample_voume() {
+float Benchtop::get_sample_volume() {
     return this->sample_volume;
 }
 

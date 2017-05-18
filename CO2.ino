@@ -2,6 +2,7 @@
 
 #include "Pump.h"
 #include "K30.h"
+#include "Benchtop.h"
 
 #define out 1         //Set direction out to be 1
 #define in 0          //Set direction in to be 0
@@ -32,11 +33,40 @@ float acid_wait_time          = 0;
 float sample_volume           = 0;
 float syringe_sample_speed    = 0;
 float sample_wait_time        = 0;
-float sample_integration_time = 0;
+float total_sample_integration_time = 0;
 
-float * parameters[] = {&syringe_rinse_speed, &rinse_volume, &rinse_time, &acid_volume,
-                    &acid_wait_time, &sample_volume, &syringe_sample_speed,
-                    &sample_wait_time, &sample_integration_time};
+Benchtop benchtop;
+
+//float * parameters[] = {&syringe_rinse_speed, &rinse_volume, &rinse_time, &acid_volume,
+//                    &acid_wait_time, &sample_volume, &syringe_sample_speed,
+//                    &sample_wait_time, &total_sample_integration_time};
+
+typedef float (Benchtop::*getter)();
+getter getters[9] = { &Benchtop::get_syringe_rinse_speed,
+                      &Benchtop::get_rinse_volume,
+                      &Benchtop::get_rinse_time,
+                      &Benchtop::get_acid_volume,
+                      &Benchtop::get_acid_wait_time,
+                      &Benchtop::get_sample_volume,
+                      &Benchtop::get_syringe_sample_speed,
+                      &Benchtop::get_sample_wait_time,
+                      &Benchtop::get_total_sample_integration_time
+                    };
+
+typedef void (Benchtop::*setter)(float);
+setter setters[9] = { &Benchtop::set_syringe_rinse_speed,
+                      &Benchtop::set_rinse_volume,
+                      &Benchtop::set_rinse_time,
+                      &Benchtop::set_acid_volume,
+                      &Benchtop::set_acid_wait_time,
+                      &Benchtop::set_sample_volume,
+                      &Benchtop::set_syringe_sample_speed,
+                      &Benchtop::set_sample_wait_time,
+                      &Benchtop::set_total_sample_integration_time
+                    };
+
+//float (*getters[1])();
+//getters[0] = &benchtop.get_syringe_rinse_speed();
 
 int menu = MAIN;
 
@@ -133,15 +163,15 @@ void print_cmd_list() {
 void print_parameter_menu() {
     Serial.print("\nCommands:\r\n");
     // new commands here
-    Serial.print("\t<1>\tSyringe Rinse Speed (s)\t\t\t"); Serial.println(syringe_rinse_speed);
-    Serial.print("\t<2>\tRinse Volume (mL)\t\t\t"); Serial.println(rinse_volume);
-    Serial.print("\t<3>\tRinse Time (s)\t\t\t\t"); Serial.println(rinse_time);
-    Serial.print("\t<4>\tAcid Volume (mL)\t\t\t"); Serial.println(acid_volume);
-    Serial.print("\t<5>\tAcid Wait Time (s)\t\t\t"); Serial.println(acid_wait_time);
-    Serial.print("\t<6>\tSample Volume (mL)\t\t\t"); Serial.println(sample_volume);
-    Serial.print("\t<7>\tSyringe Sample Speed (m/s)\t\t"); Serial.println(syringe_sample_speed);
-    Serial.print("\t<8>\tSample Wait Time(s)\t\t\t"); Serial.println(sample_wait_time);
-    Serial.print("\t<9>\tTotal Sample Integration Time(s)\t"); Serial.println(sample_integration_time);
+    Serial.print("\t<1>\tSyringe Rinse Speed (s)\t\t\t"); Serial.println(benchtop.get_syringe_rinse_speed());
+    Serial.print("\t<2>\tRinse Volume (mL)\t\t\t"); Serial.println(benchtop.get_rinse_volume());
+    Serial.print("\t<3>\tRinse Time (s)\t\t\t\t"); Serial.println(benchtop.get_rinse_time());
+    Serial.print("\t<4>\tAcid Volume (mL)\t\t\t"); Serial.println(benchtop.get_acid_volume());
+    Serial.print("\t<5>\tAcid Wait Time (s)\t\t\t"); Serial.println(benchtop.get_acid_wait_time());
+    Serial.print("\t<6>\tSample Volume (mL)\t\t\t"); Serial.println(benchtop.get_sample_volume());
+    Serial.print("\t<7>\tSyringe Sample Speed (m/s)\t\t"); Serial.println(benchtop.get_syringe_sample_speed());
+    Serial.print("\t<8>\tSample Wait Time(s)\t\t\t"); Serial.println(benchtop.get_sample_wait_time());
+    Serial.print("\t<9>\tTotal Sample Integration Time(s)\t"); Serial.println(benchtop.get_total_sample_integration_time());
     Serial.print("\t<h>\tReturn to main menu\n");
     Serial.println();
 }
@@ -189,7 +219,9 @@ void updateVariable(byte idx) {
     delay(5);
   }
   Serial.print("\tUpdating... ");
-  Serial.println(*parameters[idx] = Serial.readString().toFloat());
+  (benchtop.*(setters[idx]))(Serial.readString().toFloat());
+  Serial.println((benchtop.*(getters[idx]))());
+//  Serial.println(*parameters[idx] = Serial.readString().toFloat());
   print_parameter_menu();
   print_new_cmd_line();
 }

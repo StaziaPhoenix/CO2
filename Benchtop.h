@@ -23,7 +23,7 @@ class Benchtop {
         /*
          * Gets the syringe rinse speed         
          */
-        float set_syringe_rinse_speed();
+        float get_syringe_rinse_speed();
 
          /*
          * Sets the rinse volume
@@ -59,7 +59,7 @@ class Benchtop {
         /*
          * Gets the acid volume
          */
-        float get_acid_voume();
+        float get_acid_volume();
 
         /*
          * Sets the acid wait time
@@ -83,7 +83,7 @@ class Benchtop {
         /*
          * Gets the sample volume
          */
-        float get_sample_voume();
+        float get_sample_volume();
 
         /*
          * Sets the syringe sample speed

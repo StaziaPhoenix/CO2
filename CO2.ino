@@ -17,9 +17,28 @@
 #define valve_input_pin 11    // pump input valve
 #define valve_output_pin 10   // pump output valve
 
+#define MAIN 0
+#define PARAMETER 1
+
 // Serial CMD
 int input;                 //Initialize serial input
 int stepSize = 0;
+
+float syringe_rinse_speed     = 1;
+float rinse_volume            = 0;
+float rinse_time              = 0;
+float acid_volume             = 0;
+float acid_wait_time          = 0;
+float sample_volume           = 0;
+float syringe_sample_speed    = 0;
+float sample_wait_time        = 0;
+float sample_integration_time = 0;
+
+float * parameters[] = {&syringe_rinse_speed, &rinse_volume, &rinse_time, &acid_volume,
+                    &acid_wait_time, &sample_volume, &syringe_sample_speed,
+                    &sample_wait_time, &sample_integration_time};
+
+int menu = MAIN;
 
 // Valve & Pump
 //Pump pump(3,5,11 ,12); // Initialize pump object
@@ -27,30 +46,6 @@ Pump pump(3,5,11,10); // Initialize pump object
 //Pump(step motor/valve drive pin,step motor/valve direction pin,valve1/input-valve pin,valve2/output-valve pin);
 
 K30 k30(rx, tx);
-
-/*
-void pump(int steps, boolean dir) {
-  if(dir == 1) {
-    digitalWrite(dirpin,HIGH); //Set pump moving outwards with dir=1
-    Serial.println("This pump is moving out");
-  }else if(dir ==0){
-    digitalWrite(dirpin,LOW);  //Set pump moving inwards with dir=0
-    Serial.println("This pump is moving in");
-  }
-  
-  delay(15);
-
-  Serial.println("This pump is moving!");
-  
-  for (int i = 1; i <= steps ;i++){
-    Serial.println(i);
-    digitalWrite(steppin,HIGH);
-    delay(9); // on for 9ms
-    digitalWrite(steppin,LOW);
-    delay(30);  // off for 11ms
-    }
-}
-*/
 
 // CLI vars
 //byte in_byte=0;
@@ -73,7 +68,12 @@ void loop() {
     ack=get_ack();
     delay(3000);
   }
-  do_serial_cmd(get_serial_cmd());
+
+  if (menu == MAIN) {
+    do_serial_cmd(get_serial_cmd());
+  } else {
+    do_parameter_cmd(get_serial_cmd());
+  }
 //  actuatePump();
 //  detect();
 }
@@ -130,11 +130,28 @@ void print_cmd_list() {
     Serial.println();
 }
 
+void print_parameter_menu() {
+    Serial.print("\nCommands:\r\n");
+    // new commands here
+    Serial.print("\t<1>\tSyringe Rinse Speed (s)\t\t\t"); Serial.println(syringe_rinse_speed);
+    Serial.print("\t<2>\tRinse Volume (mL)\t\t\t"); Serial.println(rinse_volume);
+    Serial.print("\t<3>\tRinse Time (s)\t\t\t\t"); Serial.println(rinse_time);
+    Serial.print("\t<4>\tAcid Volume (mL)\t\t\t"); Serial.println(acid_volume);
+    Serial.print("\t<5>\tAcid Wait Time (s)\t\t\t"); Serial.println(acid_wait_time);
+    Serial.print("\t<6>\tSample Volume (mL)\t\t\t"); Serial.println(sample_volume);
+    Serial.print("\t<7>\tSyringe Sample Speed (m/s)\t\t"); Serial.println(syringe_sample_speed);
+    Serial.print("\t<8>\tSample Wait Time(s)\t\t\t"); Serial.println(sample_wait_time);
+    Serial.print("\t<9>\tTotal Sample Integration Time(s)\t"); Serial.println(sample_integration_time);
+    Serial.print("\t<h>\tReturn to main menu\n");
+    Serial.println();
+}
+
 void do_serial_cmd(byte cmd) {
     switch(cmd) {
         // Add more commands
         case('p'): // Set parameters menu
-          Serial.println(NOT_YET_STR);
+          menu = PARAMETER;
+          print_parameter_menu();
           print_new_cmd_line();
           break;
         case('r'): // run analysis
@@ -163,6 +180,39 @@ void do_serial_cmd(byte cmd) {
           break;
         case(NONE):
           break;
+    }
+}
+
+void updateVariable(byte idx) {
+  Serial.print("\tEnter the value you want to set.\n");
+  while (!Serial.available()) {
+    delay(5);
+  }
+  Serial.print("\tUpdating... ");
+  Serial.println(*parameters[idx] = Serial.readString().toFloat());
+  print_parameter_menu();
+  print_new_cmd_line();
+}
+
+void do_parameter_cmd(byte cmd) {
+    switch(cmd) {
+      case('h'):
+        menu = MAIN;
+        print_cmd_list();
+        print_new_cmd_line();
+        break;
+      case(NONE):
+        break;
+      default:
+        byte idx = cmd-'1';
+        if (idx > -1 && idx < 9) {
+          updateVariable(idx);
+          break;
+        }
+        Serial.println("That isn't a command");
+        print_parameter_menu();
+        print_new_cmd_line();
+        break;
     }
 }
 

@@ -56,6 +56,7 @@ void pump(int steps, boolean dir) {
 //byte in_byte=0;
 byte ack=0;
 #define NONE 130
+#define NOT_YET_STR "Not Implemented Yet"
 
 void setup() {
   pinMode(startswitch, INPUT);
@@ -119,13 +120,43 @@ void actuatePump() {
 void print_cmd_list() {
     Serial.print("\nCommands:\r\n");
     // new commands here
-    Serial.print("\t<h>\tPrint Command List");
+    Serial.print("\t<p>\tParameters Menu\n");
+    Serial.print("\t<r>\tRun\n");
+    Serial.print("\t<c>\tClean\n");
+    Serial.print("\t<0>\tTest Syringe Pump\n");
+    Serial.print("\t<1>\tTest Air Pump\n");
+    Serial.print("\t<2>\tTest K30\n");
+    Serial.print("\t<h>\tPrint Command List\n");
     Serial.println();
 }
 
 void do_serial_cmd(byte cmd) {
     switch(cmd) {
-        // Add more commands        
+        // Add more commands
+        case('p'): // Set parameters menu
+          Serial.println(NOT_YET_STR);
+          print_new_cmd_line();
+          break;
+        case('r'): // run analysis
+          Serial.println(NOT_YET_STR);
+          print_new_cmd_line();
+          break;
+        case('c'): // run cleaning cycle
+          Serial.println(NOT_YET_STR);
+          print_new_cmd_line();
+          break;
+        case('0'): // test the syringe pump system
+          Serial.println(NOT_YET_STR);
+          print_new_cmd_line();
+          break;
+        case('1'): // test the air pump system
+          Serial.println(NOT_YET_STR);
+          print_new_cmd_line();
+          break;
+        case('2'): // test the k30
+          Serial.println(NOT_YET_STR);
+          print_new_cmd_line();
+          break;
         case('h'):
           print_cmd_list();
           print_new_cmd_line();
@@ -154,7 +185,7 @@ byte get_serial_cmd() {
 
   if(Serial.available()) {
     in_byte=Serial.read();
-    Serial.print((char)in_byte); 
+    Serial.println((char)in_byte); 
     return in_byte;
   } else {
     return NONE;

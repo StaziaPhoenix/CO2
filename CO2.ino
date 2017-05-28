@@ -25,14 +25,14 @@
 int input;                 //Initialize serial input
 int stepSize = 0;
 
-float syringe_rinse_speed     = 1;
-float rinse_volume            = 0;
-float rinse_time              = 0;
-float acid_volume             = 0;
-float acid_wait_time          = 0;
-float sample_volume           = 0;
-float syringe_sample_speed    = 0;
-float sample_wait_time        = 0;
+float syringe_rinse_speed     = 0; // speed that control syringe pushes to strip chamber during rinse (s2)
+float rinse_volume            = 0; // volume of sample during rinse (s1)
+float rinse_time              = 0; // how long we let the rinse sit in the stripping chamber
+float acid_volume             = 0; // how much acid to push over acid_wait_time
+float acid_wait_time          = 0; // how long to let acid sit in the chamber before starting integration
+float sample_volume           = 0; // volume of sample during analysis (s1)
+float syringe_sample_speed    = 0; // speed that control syringe pushes to strip chamber during analysis (s2)
+float sample_wait_time        = 0; // how long to continue reading after sample integration time
 float total_sample_integration_time = 0;
 
 Benchtop benchtop;
@@ -64,9 +64,6 @@ setter setters[9] = { &Benchtop::set_syringe_rinse_speed,
                       &Benchtop::set_sample_wait_time,
                       &Benchtop::set_total_sample_integration_time
                     };
-
-//float (*getters[1])();
-//getters[0] = &benchtop.get_syringe_rinse_speed();
 
 int menu = MAIN;
 
@@ -113,7 +110,6 @@ void detect() {
   unsigned long valCO2 = k30.getValue();
   Serial.print("Co2 ppm = ");
   Serial.println(valCO2);
-  delay(2000);
 }
 
 void actuatePump() {
@@ -147,6 +143,13 @@ void actuatePump() {
 
 }
 
+
+
+
+
+
+/* -------- COMMAND LINE FUNCTIONS -------- */
+
 void print_cmd_list() {
     Serial.print("\nCommands:\r\n");
     // new commands here
@@ -161,7 +164,7 @@ void print_cmd_list() {
 }
 
 void print_parameter_menu() {
-    Serial.print("\nCommands:\r\n");
+    Serial.print("\nParameters:\r\n");
     // new commands here
     Serial.print("\t<1>\tSyringe Rinse Speed (s)\t\t\t"); Serial.println(benchtop.get_syringe_rinse_speed());
     Serial.print("\t<2>\tRinse Volume (mL)\t\t\t"); Serial.println(benchtop.get_rinse_volume());
@@ -193,7 +196,9 @@ void do_serial_cmd(byte cmd) {
           print_new_cmd_line();
           break;
         case('0'): // test the syringe pump system
-          Serial.println(NOT_YET_STR);
+          for (int i = 0; i < 10; i++) {
+            actuatePump();
+          }
           print_new_cmd_line();
           break;
         case('1'): // test the air pump system
@@ -201,7 +206,9 @@ void do_serial_cmd(byte cmd) {
           print_new_cmd_line();
           break;
         case('2'): // test the k30
-          Serial.println(NOT_YET_STR);
+          for (int i = 0; i < 10; i++) {
+            detect();
+          }
           print_new_cmd_line();
           break;
         case('h'):
@@ -221,7 +228,6 @@ void updateVariable(byte idx) {
   Serial.print("\tUpdating... ");
   (benchtop.*(setters[idx]))(Serial.readString().toFloat());
   Serial.println((benchtop.*(getters[idx]))());
-//  Serial.println(*parameters[idx] = Serial.readString().toFloat());
   print_parameter_menu();
   print_new_cmd_line();
 }

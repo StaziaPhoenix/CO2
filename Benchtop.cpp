@@ -214,14 +214,14 @@ void Benchtop::strip_chamber(Pump & pump,bool sample,bool strip) {
  * Fill Rinse w/ Syringe Pump?
  */
 void Benchtop::fill_rinse(Pump & pump) {
-  pump.pump(vol_2_steps(),IN);
+  pump.pump(vol_2_steps(rinse_volume),IN);
 }
 
 /*
  * Rinse into Stripping Chamber
  */
 void Benchtop::rinse_stripping_chamber(Pump & pump) {
-  pump.pump(spd_2_steps(),OUT);
+  pump.pump(spd_2_steps(syringe_sample_speed),OUT);
 }
 
 /*
@@ -234,15 +234,51 @@ void Benchtop::empty_rinse() {
 /*
  * Start analysis
  */
-void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30) {
+void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
+  unsigned int start_time=millis();
+  unsigned int check_time=0;
+  unsigned int last_time=0;
+  unsigned int _2seconds=2000;
+  unsigned int acid_start_time=0;
+  result_vec.push_back(detect_co2(k30));  // 1
+  
+  strip_chamber(strip,CLOSE,OPEN);
+  // TODO: actuate acid pump; push acid_volume into stripping chamber; has delay
+  while(check_time=millis()-start_time < _2seconds)
+  ;
+  result_vec.push_back(detect_co2(k30));  // 2
+  acid_start_time=check_time;
+  
+  fill_sample(syringe);
+  
+  while(last_time=millis()-check_time < _2seconds)
+  ;
+  result_vec.push_back(detect_co2(k30));  // 3
+  
+  check_time=last_time;
+
+  while(millis()-acid_start_time < acid_wait_time) {
+    // Making sure we waiting the entired acid wait time
+    while(last_time=millis()-check_time < _2seconds)  // Might be too long, might not matter tho
+    ;
+    result_vec.push_back(detect_co2(k30));
+    
+    check_time=last_time;
+  }
+
+  control_syringe(syringe,CLOSE,OPEN);
+  sample_stripping_chamber(syringe);
+
+//  result_vec.push_back(detect_co2(k30));
   
 }
 
 /*
  * Record peak from CO2 Detector (K30)
  */
-void Benchtop::detect_co2() {
-  
+unsigned long Benchtop::detect_co2(K30 & k30) { // TODO: MAKE THIS SMALLER?
+  k30.sendRequest();
+  return k30.getValue();
 }
 
 /*
@@ -262,8 +298,8 @@ void Benchtop::record_sample_temp() {
 /*
  * Fill Sample w/ Syringe Pump?  Might want to make one function with one above and  and use input argument
  */
-void Benchtop::fill_sample() {
-  
+void Benchtop::fill_sample(Pump & pump) {
+  pump.pump(vol_2_steps(sample_volume),IN);
 }
 
 /*
@@ -276,8 +312,8 @@ void Benchtop::start_peak_integration() {
 /*
  * Sample stripping chamber during analysis
  */
-void Benchtop::sample_stripping_chamber() {
-  
+void Benchtop::sample_stripping_chamber(Pump & pump) {
+  pump.pump(spd_2_steps(syringe_sample_speed),OUT);
 }
 
 /*
@@ -287,11 +323,11 @@ void Benchtop::empty_stripping_chamber() {
   
 }
 
-float Benchtop::vol_2_steps() { // TODO: CALCULATE THIS SHIT
-  return this->rinse_volume; 
+float Benchtop::vol_2_steps(float volume) { // TODO: CALCULATE THIS SHIT
+  return volume; 
 }
 
-float Benchtop::spd_2_steps() { // TODO: CALCULATE THIS SHIT
-  return this->syringe_rinse_speed; 
+float Benchtop::spd_2_steps(float spd) { // TODO: CALCULATE THIS SHIT
+  return spd; 
 }
 

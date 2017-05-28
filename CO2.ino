@@ -3,6 +3,9 @@
 #include "Pump.h"
 #include "K30.h"
 #include "Benchtop.h"
+#include "Vector.h"
+
+Vector<int> vec;
 
 #define out 1         //Set direction out to be 1
 #define in 0          //Set direction in to be 0
@@ -90,6 +93,8 @@ byte ack=0;
 #define NONE 130
 #define NOT_YET_STR "Not Implemented Yet"
 
+#define acid_pump 999 // TODO: change this shit
+
 void setup() {
   pinMode(startswitch, INPUT);
 
@@ -155,7 +160,7 @@ void actuatePump() {
 
 
 void rinse_sequence() {
-//  benchtop.waste();
+  
 }
 
 void analysis_sequence() {
@@ -204,7 +209,7 @@ void do_serial_cmd(byte cmd) {
         case('r'): // run analysis
           Serial.println(NOT_YET_STR);
           benchtop.rinse(control_syringe,strip_chamber);
-          benchtop.analysis(control_syringe,strip_chamber,k30);
+          benchtop.analysis(control_syringe,strip_chamber,k30,acid_pump);
           print_new_cmd_line();
           break;
         case('c'): // run cleaning cycle
@@ -300,11 +305,4 @@ byte get_serial_cmd() {
 void print_new_cmd_line() {
   Serial.print(">");
 }
-
-//void rinse_sequence() {
-//  rinse_pump.set_valve_dir(...);
-//  rinse_pump.step(...);
-//  rinse_pump.set_valve_dir(...);
-//  rinse_pump.step(...);
-//}
 

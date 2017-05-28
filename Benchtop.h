@@ -4,6 +4,7 @@
 #include "Arduino.h"
 #include "Pump.h"
 #include "K30.h"
+#include "Vector.h"
 
 #define CLOSE 1         //Set direction out to be 1
 #define OPEN 0          //Set direction in to be 0
@@ -137,7 +138,7 @@ class Benchtop {
         /*
          * Start analysis
          */
-        void analysis(Pump & strip,Pump & syringe,K30 & k30);
+        void analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump);
     
     private:
         float syringe_rinse_speed;
@@ -149,6 +150,8 @@ class Benchtop {
         float syringe_sample_speed;
         float sample_wait_time;
         float total_sample_integration_time;
+        
+        Vector<unsigned long> result_vec;   // TODO: MAKE THIS SMALLER?
 
         
 
@@ -182,7 +185,7 @@ class Benchtop {
         /*
          * Record peak from CO2 Detector (K30)
          */
-        void detect_co2();
+        unsigned long detect_co2(K30 & k30);
 
         /*
          * Add acid to stripping chamber
@@ -197,7 +200,7 @@ class Benchtop {
         /*
          * Fill Sample w/ Syringe Pump?  Might want to make one function with one above and  and use input argument
          */
-        void fill_sample();
+        void fill_sample(Pump & syringe);
 
         /*
          * Start peak integration for user defined length of time
@@ -207,15 +210,15 @@ class Benchtop {
         /*
          * Sample stripping chamber during analysis
          */
-        void sample_stripping_chamber();
+        void sample_stripping_chamber(Pump & pump);
 
         /*
          * Empty stripping chamber
          */
         void empty_stripping_chamber();
 
-        float vol_2_steps();
-        float spd_2_steps();
+        float vol_2_steps(float volume);
+        float spd_2_steps(float spd);
 };
 
 #endif

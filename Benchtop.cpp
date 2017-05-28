@@ -2,6 +2,7 @@
 #include "Benchtop.h"
 
 
+
 /**********     PUBLIC FUNCTIONS     **********/
 
 
@@ -180,91 +181,98 @@ float Benchtop::get_total_sample_integration_time() {
 /*
  * Rinse state
  */
-void rinse_state() {
-  
+void Benchtop::rinse(Pump & pump) {
+  waste(pump);
 }
 
 /*
  * Waste ***** probably wants IO arguments
  */
-void waste() {
-  
+void Benchtop::waste(Pump & pump) {
+  pump.set_valve_dirs(OUT,IN);
+}
+
+/*
+ * Sample ***** probably wants IO arguments
+ */
+void Benchtop::sample(Pump & pump) {
+  pump.set_valve_dirs(IN,OUT);
 }
 
 /*
  * Fill Rinse w/ Syringe Pump?
  */
-void fill_rinse() {
+void Benchtop::fill_rinse() {
   
 }
 
 /*
  * Rinse into Stripping Chamber
  */
-void rinse_stripping_chamber() {
+void Benchtop::rinse_stripping_chamber() {
   
 }
 
 /*
  * Empty Rinse
  */
-void empty_rinse() {
+void Benchtop::empty_rinse() {
   
 }
 
 /*
  * Start analysis
  */
-void start_analysis() {
+void Benchtop::start_analysis() {
   
 }
 
 /*
  * Record peak from CO2 Detector (K30)
  */
-void detect_co2() {
+void Benchtop::detect_co2() {
   
 }
 
 /*
  * Add acid to stripping chamber
  */
-void add_acid_stripping_chamber() {
+void Benchtop::add_acid_stripping_chamber() {
   
 }
 
 /*
  * Record Sample Temperature
  */
-void record_sample_temp() {
+void Benchtop::record_sample_temp() {
   
 }
 
 /*
  * Fill Sample w/ Syringe Pump?  Might want to make one function with one above and  and use input argument
  */
-void fill_sample() {
+void Benchtop::fill_sample() {
   
 }
 
 /*
  * Start peak integration for user defined length of time
  */
-void start_peak_integration() {
+void Benchtop::start_peak_integration() {
   
 }
 
 /*
  * Sample stripping chamber during analysis
  */
-void sample_stripping_chamber() {
+void Benchtop::sample_stripping_chamber() {
   
 }
 
 /*
  * Empty stripping chamber
  */
-void empty_stripping_chamber() {
+void Benchtop::empty_stripping_chamber() {
   
 }
 

@@ -2,6 +2,11 @@
 #define Benchtop_h
 
 #include "Arduino.h"
+#include "Pump.h"
+#include "K30.h"
+
+#define OUT 1         //Set direction out to be 1
+#define IN 0          //Set direction in to be 0
 
 class Benchtop {
   
@@ -135,12 +140,17 @@ class Benchtop {
         /*
          * Rinse state
          */
-        void rinse_state();
+        void rinse(Pump & pump);
 
         /*
          * Waste ***** probably wants IO arguments
          */
-        void waste();
+        void waste(Pump & pump);
+
+        /*
+         * Sampple ***** probably wants IO arguments
+         */
+        void sample(Pump & pump);
 
         /*
          * Fill Rinse w/ Syringe Pump?

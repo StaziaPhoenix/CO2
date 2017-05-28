@@ -301,3 +301,10 @@ void print_new_cmd_line() {
   Serial.print(">");
 }
 
+void rinse_sequence() {
+//  rinse_pump.set_valve_dir(...);
+//  rinse_pump.step(...);
+//  rinse_pump.set_valve_dir(...);
+//  rinse_pump.step(...);
+}
+

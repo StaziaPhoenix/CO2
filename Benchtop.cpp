@@ -171,3 +171,100 @@ float Benchtop::get_total_sample_integration_time() {
    return this->total_sample_integration_time;
 }
 
+
+
+
+
+
+/**********     PUBLIC FUNCTIONS     **********/
+/*
+ * Rinse state
+ */
+void rinse_state() {
+  
+}
+
+/*
+ * Waste ***** probably wants IO arguments
+ */
+void waste() {
+  
+}
+
+/*
+ * Fill Rinse w/ Syringe Pump?
+ */
+void fill_rinse() {
+  
+}
+
+/*
+ * Rinse into Stripping Chamber
+ */
+void rinse_stripping_chamber() {
+  
+}
+
+/*
+ * Empty Rinse
+ */
+void empty_rinse() {
+  
+}
+
+/*
+ * Start analysis
+ */
+void start_analysis() {
+  
+}
+
+/*
+ * Record peak from CO2 Detector (K30)
+ */
+void detect_co2() {
+  
+}
+
+/*
+ * Add acid to stripping chamber
+ */
+void add_acid_stripping_chamber() {
+  
+}
+
+/*
+ * Record Sample Temperature
+ */
+void record_sample_temp() {
+  
+}
+
+/*
+ * Fill Sample w/ Syringe Pump?  Might want to make one function with one above and  and use input argument
+ */
+void fill_sample() {
+  
+}
+
+/*
+ * Start peak integration for user defined length of time
+ */
+void start_peak_integration() {
+  
+}
+
+/*
+ * Sample stripping chamber during analysis
+ */
+void sample_stripping_chamber() {
+  
+}
+
+/*
+ * Empty stripping chamber
+ */
+void empty_stripping_chamber() {
+  
+}
+

@@ -123,12 +123,12 @@ class Benchtop {
          * 
          * @param total_sample_integration_time to set
          */
-        void set_total_sample_integration_time(float total_sample_integration_time);
+        void set_integration_time(float integration_time);
 
         /*
          * Gets the total sample integration time
          */
-        float get_total_sample_integration_time();   
+        float get_integration_time();   
 
         /*
          * Rinse state
@@ -149,7 +149,7 @@ class Benchtop {
         float sample_volume;
         float syringe_sample_speed;
         float sample_wait_time;
-        float total_sample_integration_time;
+        float integration_time;
         
         Vector<unsigned long> result_vec;   // TODO: MAKE THIS SMALLER?
 
@@ -217,8 +217,8 @@ class Benchtop {
          */
         void empty_stripping_chamber();
 
-        float vol_2_steps(float volume);
-        float spd_2_steps(float spd);
+        int vol_2_steps(float volume);
+        int spd_2_steps(float spd);
 };
 
 #endif

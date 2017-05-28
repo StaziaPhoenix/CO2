@@ -24,7 +24,7 @@ Benchtop::Benchtop() {
     sample_volume=0.0;
     syringe_sample_speed=0.0;
     sample_wait_time=0.0;
-    total_sample_integration_time=0.0;
+    integration_time=0.0;
 }
 
 
@@ -161,15 +161,15 @@ float Benchtop::get_sample_wait_time() {
  * 
  * @param total_sample_integration_time to set
  */
-void Benchtop::set_total_sample_integration_time(float total_sample_integration_time) {
-   this->total_sample_integration_time=total_sample_integration_time;
+void Benchtop::set_integration_time(float integration_time) {
+   this->integration_time=integration_time;
 }
 
 /*
  * Gets the total sample integration time
  */
-float Benchtop::get_total_sample_integration_time() {
-   return this->total_sample_integration_time;
+float Benchtop::get_integration_time() {
+   return this->integration_time;
 }
 
 
@@ -240,6 +240,8 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
   unsigned int last_time=0;
   unsigned int _2seconds=2000;
   unsigned int acid_start_time=0;
+  unsigned int integration_start_time=0;
+  unsigned int sample_wait_start_time=0;
   result_vec.push_back(detect_co2(k30));  // 1
   
   strip_chamber(strip,CLOSE,OPEN);
@@ -247,7 +249,7 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
   while(check_time=millis()-start_time < _2seconds)
   ;
   result_vec.push_back(detect_co2(k30));  // 2
-  acid_start_time=check_time;
+  acid_start_time=millis();
   
   fill_sample(syringe);
   
@@ -265,11 +267,39 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
     
     check_time=last_time;
   }
-
   control_syringe(syringe,CLOSE,OPEN);
-  sample_stripping_chamber(syringe);
+//  sample_stripping_chamber(syringe);
 
-//  result_vec.push_back(detect_co2(k30));
+  integration_start_time=check_time=millis();
+
+  for(int i=0;i<spd_2_steps(syringe_sample_speed);i++) {
+    control_syringe.special_pump_function();
+    
+    if(last_time=millis()-check_time > _2seconds) {
+      result_vec.push_back(detect_co2(k30));
+      check_time=last_time;
+    } 
+  }
+
+  while(millis() - integration_start_time < integration_time)  {// Might be too long, might not matter tho
+    if(last_time=millis()-check_time > _2seconds) {
+      result_vec.push_back(detect_co2(k30));
+      check_time=last_time;
+    } 
+  }
+    result_vec.push_back(detect_co2(k30));
+  sample_wait_start_time=check_time=millis();
+  while(millis() - sample_wait_start_time < sample_wait_time) {
+    if(last_time=millis()-check_time > _2seconds) {
+      result_vec.push_back(detect_co2(k30));
+      check_time=last_time;
+    } 
+  }
+
+  
+  
+  // TODO: Empty rinse stripping chamber
+  // set valves and shit
   
 }
 
@@ -323,11 +353,11 @@ void Benchtop::empty_stripping_chamber() {
   
 }
 
-float Benchtop::vol_2_steps(float volume) { // TODO: CALCULATE THIS SHIT
+int Benchtop::vol_2_steps(float volume) { // TODO: CALCULATE THIS SHIT
   return volume; 
 }
 
-float Benchtop::spd_2_steps(float spd) { // TODO: CALCULATE THIS SHIT
+int Benchtop::spd_2_steps(float spd) { // TODO: CALCULATE THIS SHIT
   return spd; 
 }
 

@@ -5,6 +5,9 @@
 #include "Pump.h"
 #include "K30.h"
 
+#define CLOSE 1         //Set direction out to be 1
+#define OPEN 0          //Set direction in to be 0
+
 #define OUT 1         //Set direction out to be 1
 #define IN 0          //Set direction in to be 0
 
@@ -125,6 +128,16 @@ class Benchtop {
          * Gets the total sample integration time
          */
         float get_total_sample_integration_time();   
+
+        /*
+         * Rinse state
+         */
+        void rinse(Pump & strip,Pump & syringe);
+
+        /*
+         * Start analysis
+         */
+        void analysis(Pump & strip,Pump & syringe,K30 & k30);
     
     private:
         float syringe_rinse_speed;
@@ -137,40 +150,34 @@ class Benchtop {
         float sample_wait_time;
         float total_sample_integration_time;
 
-        /*
-         * Rinse state
-         */
-        void rinse(Pump & pump);
+        
 
         /*
          * Waste ***** probably wants IO arguments
          */
-        void waste(Pump & pump);
+        void control_syringe(Pump & pump,bool waste,bool sample);
 
         /*
          * Sampple ***** probably wants IO arguments
          */
-        void sample(Pump & pump);
+        void strip_chamber(Pump & pump,bool sample,bool strip);
 
         /*
          * Fill Rinse w/ Syringe Pump?
          */
-        void fill_rinse();
+        void fill_rinse(Pump & syringe);
 
         /*
          * Rinse into Stripping Chamber
          */
-        void rinse_stripping_chamber();
+        void rinse_stripping_chamber(Pump & pump);
 
         /*
          * Empty Rinse
          */
         void empty_rinse();
 
-        /*
-         * Start analysis
-         */
-        void start_analysis();
+        
 
         /*
          * Record peak from CO2 Detector (K30)
@@ -206,6 +213,9 @@ class Benchtop {
          * Empty stripping chamber
          */
         void empty_stripping_chamber();
+
+        float vol_2_steps();
+        float spd_2_steps();
 };
 
 #endif

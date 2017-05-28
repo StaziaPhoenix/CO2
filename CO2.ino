@@ -77,8 +77,8 @@ int menu = MAIN;
 #define sc_sample_pin 10   // pump output valve
 
 // Valve & Pump
-//Pump pump(3,5,11 ,12); // Initialize pump object
-Pump control_syringe(cs_mtr_dvr,cs_mtr_dir,cs_input_pin,cs_output_pin); // Initialize pump object
+Pump control_syringe(cs_mtr_drv,cs_mtr_dir,cs_input_pin,cs_output_pin); // Initialize pump object
+
 Pump strip_chamber(sc_mtr_drv,sc_mtr_dir,sc_waste_pin,sc_sample_pin); // Initialize pump object
 //Pump(step motor/valve drive pin,step motor/valve direction pin,valve1/input-valve pin,valve2/output-valve pin);
 
@@ -95,7 +95,7 @@ void setup() {
 
   Serial.begin(9600);
 
-  pump.set_valve_dirs(LOW,LOW);  // Open both input valve and output valve
+  control_syringe.set_valve_dirs(LOW,LOW);  // Open both input valve and output valve
 //  pump.pump(500,out);            //Drain the pump and plumbing
 }
 
@@ -141,12 +141,12 @@ void actuatePump() {
   
   
   if(digitalRead(startswitch) == HIGH){
-    pump.set_valve_dirs(LOW,HIGH);  // OPEN INPUT VALVE (VALVE 1), CLOSE OUTPUT VALVE (VALVE 2)
-    pump.pump(stepSize,in);
+    control_syringe.set_valve_dirs(LOW,HIGH);  // OPEN INPUT VALVE (VALVE 1), CLOSE OUTPUT VALVE (VALVE 2)
+    control_syringe.pump(stepSize,in);
     Serial.println("I pumped in");
     
-    pump.set_valve_dirs(HIGH,LOW);  // CLOSE INPUT VALVE (VALVE 1), OPEN OUTPUT VALVE (VALVE 2)
-    pump.pump(stepSize,out);
+    control_syringe.set_valve_dirs(HIGH,LOW);  // CLOSE INPUT VALVE (VALVE 1), OPEN OUTPUT VALVE (VALVE 2)
+    control_syringe.pump(stepSize,out);
     Serial.println("I pumped out");
   }
   delay(200);
@@ -155,7 +155,7 @@ void actuatePump() {
 
 
 void rinse_sequence() {
-  benchtop.waste();
+//  benchtop.waste();
 }
 
 void analysis_sequence() {
@@ -203,8 +203,8 @@ void do_serial_cmd(byte cmd) {
           break;
         case('r'): // run analysis
           Serial.println(NOT_YET_STR);
-          benchtop.rinse(strip_chamber);
-          benchtop.analysis(ref_to_pump,ref_to_k30);
+          benchtop.rinse(control_syringe,strip_chamber);
+          benchtop.analysis(control_syringe,strip_chamber,k30);
           print_new_cmd_line();
           break;
         case('c'): // run cleaning cycle
@@ -301,10 +301,10 @@ void print_new_cmd_line() {
   Serial.print(">");
 }
 
-void rinse_sequence() {
+//void rinse_sequence() {
 //  rinse_pump.set_valve_dir(...);
 //  rinse_pump.step(...);
 //  rinse_pump.set_valve_dir(...);
 //  rinse_pump.step(...);
-}
+//}
 

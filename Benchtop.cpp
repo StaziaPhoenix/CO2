@@ -181,36 +181,47 @@ float Benchtop::get_total_sample_integration_time() {
 /*
  * Rinse state
  */
-void Benchtop::rinse(Pump & pump) {
-  waste(pump);
+void Benchtop::rinse(Pump & strip,Pump & syringe) {
+  control_syringe(strip,OPEN,CLOSE);
+  strip_chamber(syringe,OPEN,CLOSE);
+  fill_rinse(syringe);
+
+  // Rinse into stripping chamber
+  control_syringe(strip,CLOSE,OPEN);
+  strip_chamber(syringe,CLOSE,OPEN);
+  rinse_stripping_chamber(syringe);
+
+  delay(this->rinse_time);
+
+  // TODO: Empty rinse
 }
 
 /*
  * Waste ***** probably wants IO arguments
  */
-void Benchtop::waste(Pump & pump) {
-  pump.set_valve_dirs(OUT,IN);
+void Benchtop::control_syringe(Pump & pump,bool waste,bool sample) {
+  pump.set_valve_dirs(waste,sample);
 }
 
 /*
  * Sample ***** probably wants IO arguments
  */
-void Benchtop::sample(Pump & pump) {
-  pump.set_valve_dirs(IN,OUT);
+void Benchtop::strip_chamber(Pump & pump,bool sample,bool strip) {
+  pump.set_valve_dirs(sample,strip);
 }
 
 /*
  * Fill Rinse w/ Syringe Pump?
  */
-void Benchtop::fill_rinse() {
-  
+void Benchtop::fill_rinse(Pump & pump) {
+  pump.pump(vol_2_steps(),IN);
 }
 
 /*
  * Rinse into Stripping Chamber
  */
-void Benchtop::rinse_stripping_chamber() {
-  
+void Benchtop::rinse_stripping_chamber(Pump & pump) {
+  pump.pump(spd_2_steps(),OUT);
 }
 
 /*
@@ -223,7 +234,7 @@ void Benchtop::empty_rinse() {
 /*
  * Start analysis
  */
-void Benchtop::start_analysis() {
+void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30) {
   
 }
 
@@ -274,5 +285,13 @@ void Benchtop::sample_stripping_chamber() {
  */
 void Benchtop::empty_stripping_chamber() {
   
+}
+
+float Benchtop::vol_2_steps() { // TODO: CALCULATE THIS SHIT
+  return this->rinse_volume; 
+}
+
+float Benchtop::spd_2_steps() { // TODO: CALCULATE THIS SHIT
+  return this->syringe_rinse_speed; 
 }
 

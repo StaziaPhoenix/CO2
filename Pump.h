@@ -14,7 +14,7 @@ class Pump {
          * @param valve_input_drv input valve driver/control pin (valve1)
          * @param valve_output_drv output valve driver/control pin (valve2)
          */
-        Pump(byte step_mtr_drv,byte step_mtr_dir,byte valve_input_drv,byte valve_output_drv);
+        Pump(byte step_mtr_drv,byte step_mtr_dir,byte valve_input_drv,byte valve_output_drv);        
     
         /*
          * Sets the input and output valve directions
@@ -31,6 +31,8 @@ class Pump {
          * @param direction in which to pump, 1 for outward, 0 for inward
          */
         void pump(int step_size, bool dir);
+
+        void special_pump(bool dir);
     
     private:
         byte step_mtr_drv;        // Stepper motor driver pin

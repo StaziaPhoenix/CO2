@@ -58,9 +58,7 @@ void Pump::pump(int step_size, bool dir) {
   } else if(!dir){
     step_mtr_set_dir(LOW);  // Set stepper motor (pump) to move inwards (i.e. dir=0)
     Serial.println("This pump is moving in");
-  }
-  
-  delay(15);  // Delete?  Do we need this?
+  }  
 
   Serial.println("This pump is moving!");
   
@@ -72,6 +70,23 @@ void Pump::pump(int step_size, bool dir) {
     step_mtr_actuate(LOW);
     delay(11);  // off for 11ms or 30ms?
   }
+}
+
+void Pump::special_pump(bool dir) {
+  if(dir) {
+    step_mtr_set_dir(HIGH); // Set stepper motor (pump) to move outwards (i.e. dir=1)
+    Serial.println("This pump is moving out");
+  } else if(!dir){
+    step_mtr_set_dir(LOW);  // Set stepper motor (pump) to move inwards (i.e. dir=0)
+    Serial.println("This pump is moving in");
+  }
+
+  Serial.println("This pump is moving!");  
+    
+  step_mtr_actuate(HIGH);
+  delay(9); // on for 9ms
+  step_mtr_actuate(LOW);
+  delay(11);  // off for 11ms or 30ms?
 }
 
 

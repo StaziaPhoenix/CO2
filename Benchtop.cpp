@@ -273,7 +273,7 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
   integration_start_time=check_time=millis();
 
   for(int i=0;i<spd_2_steps(syringe_sample_speed);i++) {
-    control_syringe.special_pump_function();
+    syringe.special_pump(OUT);
     
     if(last_time=millis()-check_time > _2seconds) {
       result_vec.push_back(detect_co2(k30));

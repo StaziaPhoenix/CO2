@@ -53,7 +53,7 @@ getter getters[9] = { &Benchtop::get_syringe_rinse_speed,
                       &Benchtop::get_sample_volume,
                       &Benchtop::get_syringe_sample_speed,
                       &Benchtop::get_sample_wait_time,
-                      &Benchtop::get_total_sample_integration_time
+                      &Benchtop::get_integration_time
                     };
 
 typedef void (Benchtop::*setter)(float);
@@ -65,7 +65,7 @@ setter setters[9] = { &Benchtop::set_syringe_rinse_speed,
                       &Benchtop::set_sample_volume,
                       &Benchtop::set_syringe_sample_speed,
                       &Benchtop::set_sample_wait_time,
-                      &Benchtop::set_total_sample_integration_time
+                      &Benchtop::set_integration_time
                     };
 
 int menu = MAIN;
@@ -193,7 +193,7 @@ void print_parameter_menu() {
     Serial.print("\t<6>\tSample Volume (mL)\t\t\t"); Serial.println(benchtop.get_sample_volume());
     Serial.print("\t<7>\tSyringe Sample Speed (m/s)\t\t"); Serial.println(benchtop.get_syringe_sample_speed());
     Serial.print("\t<8>\tSample Wait Time(s)\t\t\t"); Serial.println(benchtop.get_sample_wait_time());
-    Serial.print("\t<9>\tTotal Sample Integration Time(s)\t"); Serial.println(benchtop.get_total_sample_integration_time());
+    Serial.print("\t<9>\tIntegration Time(s)\t"); Serial.println(benchtop.get_integration_time());
     Serial.print("\t<h>\tReturn to main menu\n");
     Serial.println();
 }

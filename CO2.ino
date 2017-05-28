@@ -66,10 +66,20 @@ setter setters[9] = { &Benchtop::set_syringe_rinse_speed,
                     };
 
 int menu = MAIN;
+#define cs_mtr_drv 3        // pump steppin
+#define cs_mtr_dir 5        // pump dirpin
+#define cs_input_pin 11    // pump input valve
+#define cs_output_pin 10   // pump output valve
+
+#define sc_mtr_drv 3        // pump steppin
+#define sc_mtr_dir 5        // pump dirpin
+#define sc_waste_pin 11    // pump input valve
+#define sc_sample_pin 10   // pump output valve
 
 // Valve & Pump
 //Pump pump(3,5,11 ,12); // Initialize pump object
-Pump pump(3,5,11,10); // Initialize pump object
+Pump control_syringe(cs_mtr_dvr,cs_mtr_dir,cs_input_pin,cs_output_pin); // Initialize pump object
+Pump strip_chamber(sc_mtr_drv,sc_mtr_dir,sc_waste_pin,sc_sample_pin); // Initialize pump object
 //Pump(step motor/valve drive pin,step motor/valve direction pin,valve1/input-valve pin,valve2/output-valve pin);
 
 K30 k30(rx, tx);
@@ -144,9 +154,13 @@ void actuatePump() {
 }
 
 
+void rinse_sequence() {
+  benchtop.waste();
+}
 
-
-
+void analysis_sequence() {
+  
+}
 
 /* -------- COMMAND LINE FUNCTIONS -------- */
 
@@ -189,6 +203,8 @@ void do_serial_cmd(byte cmd) {
           break;
         case('r'): // run analysis
           Serial.println(NOT_YET_STR);
+          benchtop.rinse(strip_chamber);
+          benchtop.analysis(ref_to_pump,ref_to_k30);
           print_new_cmd_line();
           break;
         case('c'): // run cleaning cycle

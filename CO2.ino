@@ -19,7 +19,7 @@ Vector<int> vec;
 #define MAIN 0
 #define PARAMETER 1
 
-#define _sd 1
+#define _sd 53
 
 // Serial CMD
 int input;                 //Initialize serial input
@@ -68,10 +68,10 @@ setter setters[9] = { &Benchtop::set_syringe_rinse_speed,
                     };
 
 int menu = MAIN;
-#define cs_mtr_drv 3        // pump steppin
-#define cs_mtr_dir 5        // pump dirpin
-#define cs_input_pin 11    // pump input valve
-#define cs_output_pin 10   // pump output valve
+#define cs_mtr_drv 3        // control syringe steppin
+#define cs_mtr_dir 5        // control syringe dirpin
+#define cs_input_pin 7    // control syringe input valve
+#define cs_output_pin 6   // control syringe output valve
 
 #define sc_mtr_drv 3        // pump steppin
 #define sc_mtr_dir 5        // pump dirpin

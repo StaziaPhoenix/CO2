@@ -248,7 +248,7 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump, Fi
   strip_chamber(strip,CLOSE,OPEN);
   // TODO: actuate acid pump; push acid_volume into stripping chamber; has delay
   digitalWrite(acid_pump, HIGH);
-  delay(500);
+  delay(2000);
   digitalWrite(acid_pump, LOW);
   // END ACID PUMP - ASK ABOUT THIS
   while(check_time=millis()-start_time < _2seconds)
@@ -366,7 +366,7 @@ int Benchtop::vol_2_steps(float volume) { // TODO: CALCULATE THIS SHIT
 
 int Benchtop::spd_2_steps(float spd) { // TODO: CALCULATE THIS SHIT
 //  return spd;
-  return 500; 
+  return 500;
 }
 
 void Benchtop::write_out(File & myFile) {

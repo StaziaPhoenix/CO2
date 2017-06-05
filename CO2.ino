@@ -4,6 +4,7 @@
 #include "K30.h"
 #include "Benchtop.h"
 #include "Vector.h"
+#include <SD.h>
 
 Vector<int> vec;
 
@@ -15,30 +16,28 @@ Vector<int> vec;
 #define rx 12
 #define tx 13
 
-/* Pump 8 */
-#define step_mtr_drv 3        // pump steppin
-#define step_mtr_dir 5        // pump dirpin
-#define valve_input_pin 11    // pump input valve
-#define valve_output_pin 10   // pump output valve
-
 #define MAIN 0
 #define PARAMETER 1
+
+#define _sd 1
 
 // Serial CMD
 int input;                 //Initialize serial input
 int stepSize = 0;
+String sample_name;
 
-float syringe_rinse_speed     = 0; // speed that control syringe pushes to strip chamber during rinse (s2)
-float rinse_volume            = 0; // volume of sample during rinse (s1)
-float rinse_time              = 0; // how long we let the rinse sit in the stripping chamber
-float acid_volume             = 0; // how much acid to push over acid_wait_time
-float acid_wait_time          = 0; // how long to let acid sit in the chamber before starting integration
-float sample_volume           = 0; // volume of sample during analysis (s1)
-float syringe_sample_speed    = 0; // speed that control syringe pushes to strip chamber during analysis (s2)
-float sample_wait_time        = 0; // how long to continue reading after sample integration time
-float total_sample_integration_time = 0;
+//float syringe_rinse_speed     = 0; // speed that control syringe pushes to strip chamber during rinse (s2)
+//float rinse_volume            = 0; // volume of sample during rinse (s1)
+//float rinse_time              = 0; // how long we let the rinse sit in the stripping chamber
+//float acid_volume             = 0; // how much acid to push over acid_wait_time
+//float acid_wait_time          = 0; // how long to let acid sit in the chamber before starting integration
+//float sample_volume           = 0; // volume of sample during analysis (s1)
+//float syringe_sample_speed    = 0; // speed that control syringe pushes to strip chamber during analysis (s2)
+//float sample_wait_time        = 0; // how long to continue reading after sample integration time
+//float total_sample_integration_time = 0;
 
 Benchtop benchtop;
+File myFile;
 
 //float * parameters[] = {&syringe_rinse_speed, &rinse_volume, &rinse_time, &acid_volume,
 //                    &acid_wait_time, &sample_volume, &syringe_sample_speed,
@@ -81,14 +80,12 @@ int menu = MAIN;
 
 // Valve & Pump
 Pump control_syringe(cs_mtr_drv,cs_mtr_dir,cs_input_pin,cs_output_pin); // Initialize pump object
-
 Pump strip_chamber(sc_mtr_drv,sc_mtr_dir,sc_waste_pin,sc_sample_pin); // Initialize pump object
 //Pump(step motor/valve drive pin,step motor/valve direction pin,valve1/input-valve pin,valve2/output-valve pin);
 
 K30 k30(rx, tx);
 
 // CLI vars
-//byte in_byte=0;
 byte ack=0;
 #define NONE 130
 #define NOT_YET_STR "Not Implemented Yet"
@@ -99,9 +96,16 @@ void setup() {
   pinMode(startswitch, INPUT);
 
   Serial.begin(9600);
+  
+  Serial.print("Initializing SD card...");
+  if (!SD.begin(_sd)) {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization done.");
 
   control_syringe.set_valve_dirs(LOW,LOW);  // Open both input valve and output valve
-//  pump.pump(500,out);            //Drain the pump and plumbing
+  control_syringe.pump(500,out);            //Drain the pump and plumbing
 }
 
 
@@ -158,15 +162,6 @@ void actuatePump() {
 
 }
 
-
-void rinse_sequence() {
-  
-}
-
-void analysis_sequence() {
-  
-}
-
 /* -------- COMMAND LINE FUNCTIONS -------- */
 
 void print_cmd_list() {
@@ -207,9 +202,11 @@ void do_serial_cmd(byte cmd) {
           print_new_cmd_line();
           break;
         case('r'): // run analysis
-          Serial.println(NOT_YET_STR);
+          myFile = SD.open(sample_name, FILE_WRITE);
+          myFile.println(sample_name);
           benchtop.rinse(control_syringe,strip_chamber);
-          benchtop.analysis(control_syringe,strip_chamber,k30,acid_pump);
+          benchtop.analysis(control_syringe,strip_chamber,k30,acid_pump,myFile);
+          myFile.close();
           print_new_cmd_line();
           break;
         case('c'): // run cleaning cycle

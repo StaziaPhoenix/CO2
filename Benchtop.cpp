@@ -16,15 +16,15 @@
  * @param valve_output_drv output valve driver/control pin (valve2)
  */
 Benchtop::Benchtop() {
-    syringe_rinse_speed=3.3;
-    rinse_volume=0.0;
-    rinse_time=0.0;
-    acid_volume=0.0;
-    acid_wait_time=0.0;
-    sample_volume=0.0;
-    syringe_sample_speed=0.0;
-    sample_wait_time=0.0;
-    integration_time=0.0;
+    syringe_rinse_speed=  0.0;
+    rinse_volume=         0.0;
+    rinse_time=           0.0;
+    acid_volume=          0.0;
+    acid_wait_time=       0.0;
+    sample_volume=        0.0;
+    syringe_sample_speed= 0.0;
+    sample_wait_time=     0.0;
+    integration_time=     0.0;
 }
 
 
@@ -194,6 +194,7 @@ void Benchtop::rinse(Pump & strip,Pump & syringe) {
   delay(this->rinse_time);
 
   // TODO: Empty rinse
+  strip_chamber(strip,OPEN,CLOSE);
 }
 
 /*
@@ -234,7 +235,7 @@ void Benchtop::empty_rinse() {
 /*
  * Start analysis
  */
-void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
+void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile) {
   unsigned int start_time=millis();
   unsigned int check_time=0;
   unsigned int last_time=0;
@@ -246,6 +247,10 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
   
   strip_chamber(strip,CLOSE,OPEN);
   // TODO: actuate acid pump; push acid_volume into stripping chamber; has delay
+  digitalWrite(acid_pump, HIGH);
+  delay(500);
+  digitalWrite(acid_pump, LOW);
+  // END ACID PUMP - ASK ABOUT THIS
   while(check_time=millis()-start_time < _2seconds)
   ;
   result_vec.push_back(detect_co2(k30));  // 2
@@ -272,7 +277,7 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
 
   integration_start_time=check_time=millis();
 
-  for(int i=0;i<spd_2_steps(syringe_sample_speed);i++) {
+  for(int i=0;i<spd_2_steps(syringe_sample_speed);i++) { //???????????? pump full volume at normal speed
     syringe.special_pump(OUT);
     
     if(last_time=millis()-check_time > _2seconds) {
@@ -288,6 +293,7 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
     } 
   }
     result_vec.push_back(detect_co2(k30));
+  
   sample_wait_start_time=check_time=millis();
   while(millis() - sample_wait_start_time < sample_wait_time) {
     if(last_time=millis()-check_time > _2seconds) {
@@ -296,17 +302,17 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump) {
     } 
   }
 
-  
-  
-  // TODO: Empty rinse stripping chamber
+  strip_chamber(strip,OPEN,CLOSE);
   // set valves and shit
-  
+
+  // write results to file
+  write_out(myFile);
 }
 
 /*
  * Record peak from CO2 Detector (K30)
  */
-unsigned long Benchtop::detect_co2(K30 & k30) { // TODO: MAKE THIS SMALLER?
+int Benchtop::detect_co2(K30 & k30) { // TODO: MAKE THIS SMALLER?
   k30.sendRequest();
   return k30.getValue();
 }
@@ -354,10 +360,18 @@ void Benchtop::empty_stripping_chamber() {
 }
 
 int Benchtop::vol_2_steps(float volume) { // TODO: CALCULATE THIS SHIT
-  return volume; 
+//  return volume;
+  return 500; 
 }
 
 int Benchtop::spd_2_steps(float spd) { // TODO: CALCULATE THIS SHIT
-  return spd; 
+//  return spd;
+  return 500; 
+}
+
+void Benchtop::write_out(File & myFile) {
+  for (int i = 0; i < result_vec.size(); i++) {
+    myFile.println(result_vec[i]);
+  }
 }
 

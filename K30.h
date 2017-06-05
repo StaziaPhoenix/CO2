@@ -12,7 +12,7 @@ class K30 {
     }
 
     void sendRequest();
-    unsigned long getValue();
+    int getValue();
     
   private:
     SoftwareSerial K_30_Serial;

@@ -55,7 +55,7 @@ void K30::sendRequest()
   }  
 }
 
-unsigned long K30::getValue()
+int K30::getValue()
 {
     int high = response[3];                        // high byte for value is 4th byte in packet in the packet
     int low = response[4];                         // low byte for value is 5th byte in the packet

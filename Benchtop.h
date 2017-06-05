@@ -5,6 +5,7 @@
 #include "Pump.h"
 #include "K30.h"
 #include "Vector.h"
+#include <SD.h>
 
 #define CLOSE 1         //Set direction out to be 1
 #define OPEN 0          //Set direction in to be 0
@@ -138,7 +139,7 @@ class Benchtop {
         /*
          * Start analysis
          */
-        void analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump);
+        void analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile);
     
     private:
         float syringe_rinse_speed;
@@ -151,8 +152,8 @@ class Benchtop {
         float sample_wait_time;
         float integration_time;
         
-        Vector<unsigned long> result_vec;   // TODO: MAKE THIS SMALLER?
-
+//        Vector<unsigned long> result_vec;   // TODO: MAKE THIS SMALLER?
+        Vector<int> result_vec;
         
 
         /*
@@ -185,7 +186,8 @@ class Benchtop {
         /*
          * Record peak from CO2 Detector (K30)
          */
-        unsigned long detect_co2(K30 & k30);
+//        unsigned long detect_co2(K30 & k30);
+          int detect_co2(K30 & k30);
 
         /*
          * Add acid to stripping chamber
@@ -219,6 +221,8 @@ class Benchtop {
 
         int vol_2_steps(float volume);
         int spd_2_steps(float spd);
+
+        void write_out(File & myFile);
 };
 
 #endif

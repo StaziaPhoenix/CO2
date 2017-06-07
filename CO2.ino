@@ -24,7 +24,7 @@ Vector<int> vec;
 // Serial CMD
 int input;                 //Initialize serial input
 int stepSize = 0;
-String sample_name;
+String sample_name = "FAKE";
 
 //float syringe_rinse_speed     = 0; // speed that control syringe pushes to strip chamber during rinse (s2)
 //float rinse_volume            = 0; // volume of sample during rinse (s1)
@@ -132,32 +132,32 @@ void detect() {
 }
 
 void actuatePump() {
-  if(Serial.available()) {
-    input = Serial.parseInt();
-    if(input != 0){
-      stepSize = input;
-    }
-    if(stepSize > 500){
-      stepSize = 500;
-      Serial.println("500 is largest allowable step size");
-    }else if(stepSize < 0){
-      stepSize = 0;
-      Serial.println("No negative numbers, dumb dumb");
-    }
-    Serial.print("Step size = ");
-    Serial.println(stepSize);
-  }
+//  if(Serial.available()) {
+//    input = Serial.parseInt();
+//    if(input != 0){
+//      stepSize = input;
+//    }
+//    if(stepSize > 500){
+//      stepSize = 500;
+//      Serial.println("500 is largest allowable step size");
+//    }else if(stepSize < 0){
+//      stepSize = 0;
+//      Serial.println("No negative numbers, dumb dumb");
+//    }
+//    Serial.print("Step size = ");
+//    Serial.println(stepSize);
+//  }
   
-  
-  if(digitalRead(startswitch) == HIGH){
-    control_syringe.set_valve_dirs(LOW,HIGH);  // OPEN INPUT VALVE (VALVE 1), CLOSE OUTPUT VALVE (VALVE 2)
+    stepSize = 500;
+//  if(digitalRead(startswitch) == HIGH){
+    control_syringe.set_valve_dirs(HIGH,LOW);  // OPEN INPUT VALVE (VALVE 1), CLOSE OUTPUT VALVE (VALVE 2)
     control_syringe.pump(stepSize,in);
     Serial.println("I pumped in");
     
-    control_syringe.set_valve_dirs(HIGH,LOW);  // CLOSE INPUT VALVE (VALVE 1), OPEN OUTPUT VALVE (VALVE 2)
+    control_syringe.set_valve_dirs(LOW,HIGH);  // CLOSE INPUT VALVE (VALVE 1), OPEN OUTPUT VALVE (VALVE 2)
     control_syringe.pump(stepSize,out);
     Serial.println("I pumped out");
-  }
+//  }
   delay(200);
 
 }
@@ -214,18 +214,18 @@ void do_serial_cmd(byte cmd) {
           print_new_cmd_line();
           break;
         case('0'): // test the syringe pump system
-          for (int i = 0; i < 10; i++) {
+          for (int i = 0; i < 3; i++) {
             actuatePump();
           }
           print_new_cmd_line();
           break;
         case('1'): // test the air pump system
-          Serial.println(NOT_YET_STR);
           print_new_cmd_line();
           break;
         case('2'): // test the k30
-          for (int i = 0; i < 10; i++) {
+          for (int i = 0; i < 5; i++) {
             detect();
+            delay(2000);
           }
           print_new_cmd_line();
           break;

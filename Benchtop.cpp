@@ -182,19 +182,22 @@ float Benchtop::get_integration_time() {
  * Rinse state
  */
 void Benchtop::rinse(Pump & strip,Pump & syringe) {
-  control_syringe(strip,OPEN,CLOSE);
-  strip_chamber(syringe,OPEN,CLOSE);
+  control_syringe(syringe,OPEN,CLOSE);
+  //strip_chamber(strip,OPEN,CLOSE);
+//  digitalWrite(??,HIGH);
   fill_rinse(syringe);
 
   // Rinse into stripping chamber
   control_syringe(strip,CLOSE,OPEN);
-  strip_chamber(syringe,CLOSE,OPEN);
+  //strip_chamber(syringe,CLOSE,OPEN);
+ // digitalWrite(??,LOW)
   rinse_stripping_chamber(syringe);
 
   delay(this->rinse_time);
 
   // TODO: Empty rinse
-  strip_chamber(strip,OPEN,CLOSE);
+ //strip_chamber(strip,OPEN,CLOSE);
+// digitalWrite(??,HIGH);
 }
 
 /*

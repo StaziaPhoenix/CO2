@@ -7,8 +7,6 @@
 #include "Vector.h"
 #include <SD.h>
 
-Vector<int> vec;
-
 #define out 1         //Set direction out to be 1
 #define in 0          //Set direction in to be 0
 
@@ -28,22 +26,8 @@ int stepSize = 0;
 String sample_name = "FAKE";
 String file_name = "test.txt";
 
-//float syringe_rinse_speed     = 0; // speed that control syringe pushes to strip chamber during rinse (s2)
-//float rinse_volume            = 0; // volume of sample during rinse (s1)
-//float rinse_time              = 0; // how long we let the rinse sit in the stripping chamber
-//float acid_volume             = 0; // how much acid to push over acid_wait_time
-//float acid_wait_time          = 0; // how long to let acid sit in the chamber before starting integration
-//float sample_volume           = 0; // volume of sample during analysis (s1)
-//float syringe_sample_speed    = 0; // speed that control syringe pushes to strip chamber during analysis (s2)
-//float sample_wait_time        = 0; // how long to continue reading after sample integration time
-//float total_sample_integration_time = 0;
-
 Benchtop benchtop;
 File myFile;
-
-//float * parameters[] = {&syringe_rinse_speed, &rinse_volume, &rinse_time, &acid_volume,
-//                    &acid_wait_time, &sample_volume, &syringe_sample_speed,
-//                    &sample_wait_time, &total_sample_integration_time};
 
 typedef float (Benchtop::*getter)();
 getter getters[9] = { &Benchtop::get_syringe_rinse_speed,
@@ -76,13 +60,13 @@ int menu = MAIN;
 #define cs_output_pin 7   // control syringe output valve
 
 #define sc_mtr_drv 8        // pump steppin
-//#define sc_mtr_dir 5        // pump dirpin
-//#define sc_waste_pin 11    // pump input valve
-//#define sc_sample_pin 10   // pump output valve
 
 // Valve & Pump
 Pump control_syringe(cs_mtr_drv,cs_mtr_dir,cs_input_pin,cs_output_pin); // Initialize pump object
 Pinch strip_chamber(sc_mtr_drv); // Initialize pump object
+
+#define acid_pump_drv 9  // TODO: change this shit
+Pinch acid_pump(acid_pump_drv);
 
 //Pump(step motor/valve drive pin,step motor/valve direction pin,valve1/input-valve pin,valve2/output-valve pin);
 
@@ -93,10 +77,10 @@ byte ack=0;
 #define NONE 130
 #define NOT_YET_STR "Not Implemented Yet"
 
-#define acid_pump 9  // TODO: change this shit
+
 
 void setup() {
-  pinMode(acid_pump, OUTPUT);
+//  pinMode(acid_pump, OUTPUT);
 
   Serial.begin(9600);
   
@@ -107,8 +91,7 @@ void setup() {
   }
   Serial.println("initialization done.");
 
-  control_syringe.set_valve_dirs(LOW,LOW);  // Open both input valve and output valve
-  control_syringe.pump(500,out);            //Drain the pump and plumbing
+  benchtop.flush(control_syringe);
 }
 
 

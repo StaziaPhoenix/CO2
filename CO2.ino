@@ -182,15 +182,15 @@ void print_cmd_list() {
 void print_parameter_menu() {
     Serial.print("\nParameters:\r\n");
     // new commands here
-    Serial.print("\t<1>\tSyringe Rinse Speed (s)\t\t\t"); Serial.println(benchtop.get_syringe_rinse_speed());
-    Serial.print("\t<2>\tRinse Volume (mL)\t\t\t"); Serial.println(benchtop.get_rinse_volume());
-    Serial.print("\t<3>\tRinse Time (s)\t\t\t\t"); Serial.println(benchtop.get_rinse_time());
-    Serial.print("\t<4>\tAcid Volume (mL)\t\t\t"); Serial.println(benchtop.get_acid_volume());
-    Serial.print("\t<5>\tAcid Wait Time (s)\t\t\t"); Serial.println(benchtop.get_acid_wait_time());
-    Serial.print("\t<6>\tSample Volume (mL)\t\t\t"); Serial.println(benchtop.get_sample_volume());
-    Serial.print("\t<7>\tSyringe Sample Speed (m/s)\t\t"); Serial.println(benchtop.get_syringe_sample_speed());
-    Serial.print("\t<8>\tSample Wait Time(s)\t\t\t"); Serial.println(benchtop.get_sample_wait_time());
-    Serial.print("\t<9>\tIntegration Time(s)\t"); Serial.println(benchtop.get_integration_time());
+    Serial.print("\t<1>\tSyringe Rinse Speed (ul/min)\t\t\t"); Serial.println(benchtop.get_syringe_rinse_speed());
+    Serial.print("\t<2>\tRinse Volume (uL)\t\t\t"); Serial.println(benchtop.get_rinse_volume());
+    Serial.print("\t<3>\tRinse Time (ms)\t\t\t\t"); Serial.println(benchtop.get_rinse_time());
+    Serial.print("\t<4>\tAcid Volume (uL)\t\t\t"); Serial.println(benchtop.get_acid_volume());
+    Serial.print("\t<5>\tAcid Wait Time (ms)\t\t\t"); Serial.println(benchtop.get_acid_wait_time());
+    Serial.print("\t<6>\tSample Volume (uL)\t\t\t"); Serial.println(benchtop.get_sample_volume());
+    Serial.print("\t<7>\tSyringe Sample Speed (uL/m)\t\t"); Serial.println(benchtop.get_syringe_sample_speed());
+    Serial.print("\t<8>\tSample Wait Time(ms)\t\t\t"); Serial.println(benchtop.get_sample_wait_time());
+    Serial.print("\t<9>\tIntegration Time(ms)\t"); Serial.println(benchtop.get_integration_time());
     Serial.print("\t<h>\tReturn to main menu\n");
     Serial.println();
 }

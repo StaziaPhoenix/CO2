@@ -26,6 +26,7 @@ Vector<int> vec;
 int input;                 //Initialize serial input
 int stepSize = 0;
 String sample_name = "FAKE";
+String file_name = "test.txt";
 
 //float syringe_rinse_speed     = 0; // speed that control syringe pushes to strip chamber during rinse (s2)
 //float rinse_volume            = 0; // volume of sample during rinse (s1)
@@ -71,10 +72,10 @@ setter setters[9] = { &Benchtop::set_syringe_rinse_speed,
 int menu = MAIN;
 #define cs_mtr_drv 3        // control syringe steppin
 #define cs_mtr_dir 5        // control syringe dirpin
-#define cs_input_pin 7    // control syringe input valve
-#define cs_output_pin 6   // control syringe output valve
+#define cs_input_pin 6    // control syringe input valve
+#define cs_output_pin 7   // control syringe output valve
 
-#define sc_mtr_drv 3        // pump steppin
+#define sc_mtr_drv 8        // pump steppin
 //#define sc_mtr_dir 5        // pump dirpin
 //#define sc_waste_pin 11    // pump input valve
 //#define sc_sample_pin 10   // pump output valve
@@ -92,10 +93,10 @@ byte ack=0;
 #define NONE 130
 #define NOT_YET_STR "Not Implemented Yet"
 
-#define acid_pump 999 // TODO: change this shit
+#define acid_pump 9  // TODO: change this shit
 
 void setup() {
-  pinMode(startswitch, INPUT);
+  pinMode(acid_pump, OUTPUT);
 
   Serial.begin(9600);
   
@@ -204,10 +205,18 @@ void do_serial_cmd(byte cmd) {
           print_new_cmd_line();
           break;
         case('r'): // run analysis
-          myFile = SD.open(sample_name, FILE_WRITE);
+          myFile = SD.open(file_name, FILE_WRITE);
           myFile.println(sample_name);
-          benchtop.rinse(strip_chamber,control_syringe);
+          if (!myFile) {
+            Serial.println("Garbage.");
+            break;
+          }
+          Serial.println("BEGIN RINSE\n");
+//          benchtop.rinse(strip_chamber,control_syringe);
+          Serial.println("\nEND RINSE\n");
+          Serial.println("\nBEGIN ANALYSIS\n");
           benchtop.analysis(strip_chamber,control_syringe,k30,acid_pump,myFile);
+          Serial.println("\nEND ANALYSIS\n");
           myFile.close();
           print_new_cmd_line();
           break;

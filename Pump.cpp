@@ -54,16 +54,15 @@ void Pump::set_valve_dirs(bool input_valve_dir,bool output_valve_dir) {
 void Pump::pump(int step_size, bool dir) {
   if(dir) {
     step_mtr_set_dir(HIGH); // Set stepper motor (pump) to move outwards (i.e. dir=1)
-    Serial.println("This pump is moving out");
+    //Serial.println("This pump is moving out");
   } else if(!dir){
     step_mtr_set_dir(LOW);  // Set stepper motor (pump) to move inwards (i.e. dir=0)
-    Serial.println("This pump is moving in");
+    //Serial.println("This pump is moving in");
   }  
 
-  Serial.println("This pump is moving!");
+  //Serial.println("This pump is moving!");
   
   for (int i=0;i<step_size;i++){
-    Serial.println(i);
     
     step_mtr_actuate(HIGH);
     delay(9); // on for 9ms
@@ -75,10 +74,10 @@ void Pump::pump(int step_size, bool dir) {
 void Pump::special_pump(bool dir) {
   if(dir) {
     step_mtr_set_dir(HIGH); // Set stepper motor (pump) to move outwards (i.e. dir=1)
-    Serial.println("This pump is moving out");
+    //Serial.println("This pump is moving out");
   } else if(!dir){
     step_mtr_set_dir(LOW);  // Set stepper motor (pump) to move inwards (i.e. dir=0)
-    Serial.println("This pump is moving in");
+    //Serial.println("This pump is moving in");
   } 
     
   step_mtr_actuate(HIGH);

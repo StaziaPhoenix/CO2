@@ -15,7 +15,7 @@
  * @param valve_output_drv output valve driver/control pin (valve2)
  */
 Pinch::Pinch(byte step_mtr_drv) {
-  this->step_mtr_drv=step_mtr_drv;
+  pinMode(this->step_mtr_drv=step_mtr_drv,OUTPUT);
   close(); 
 }
 

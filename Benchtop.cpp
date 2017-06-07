@@ -24,7 +24,18 @@ Benchtop::Benchtop() {
     sample_volume=        750.0;
     syringe_sample_speed= 500.0;
     sample_wait_time=     10.0*1000;
-    integration_time=     145.0*1000;
+    //integration_time=     145.0*1000;
+    integration_time=     30.0*1000;
+
+//    syringe_rinse_speed=  10.0;
+//    rinse_volume=         10.0;
+//    rinse_time=           10.0*1000;
+//    acid_volume=          10.0;
+//    acid_wait_time=       10.0*1000;
+//    sample_volume=        10.0;
+//    syringe_sample_speed= 10.0;
+//    sample_wait_time=     10.0*1000;
+//    integration_time=     10.0*1000;
 }
 
 
@@ -182,23 +193,32 @@ float Benchtop::get_integration_time() {
  * Rinse state
  */
 void Benchtop::rinse(Pinch & strip,Pump & syringe) {
+  if (debug) Serial.println("Control syringe open to SAMPLE");
   control_syringe(syringe,OPEN,CLOSE);
   //strip_chamber(strip,OPEN,CLOSE);
-//  digitalWrite(??,HIGH);
+
+  if (debug) Serial.println("Strip chamber open to WASTE");
+  strip.open();
+
+  if (debug) Serial.println("Filling control syringe with rinse");
   fill_rinse(syringe);
 
   // Rinse into stripping chamber
 //  control_syringe(strip,CLOSE,OPEN);
-  strip.open();
-  //strip_chamber(syringe,CLOSE,OPEN);
- // digitalWrite(??,LOW)
+  if (debug) Serial.println("Strip chamber open to SAMPLE");
+  strip.close();
+//strip_chamber(syringe,CLOSE,OPEN);
+
+  if (debug) Serial.println("Filling strip chamber with sample");
   rinse_stripping_chamber(syringe);
 
+  if (debug) Serial.println("Waiting for rinse time to elapse");
   delay(this->rinse_time);
 
   // TODO: Empty rinse
  //strip_chamber(strip,OPEN,CLOSE);
-// digitalWrite(??,HIGH);
+  if (debug) Serial.println("Strip chamber open to WASTE");
+  strip.open();
 }
 
 /*
@@ -219,6 +239,7 @@ void Benchtop::strip_chamber(Pump & pump,bool sample,bool strip) {
  * Fill Rinse w/ Syringe Pump?
  */
 void Benchtop::fill_rinse(Pump & pump) {
+  if (debug) Serial.println("\t\tPumping In");
   pump.pump(vol_2_steps(rinse_volume),IN);
 }
 
@@ -226,6 +247,7 @@ void Benchtop::fill_rinse(Pump & pump) {
  * Rinse into Stripping Chamber
  */
 void Benchtop::rinse_stripping_chamber(Pump & pump) {
+  if (debug) Serial.println("\t\tPumping Out");
   pump.pump(spd_2_steps(syringe_sample_speed),OUT);
 }
 
@@ -241,78 +263,135 @@ void Benchtop::empty_rinse() {
  */
 void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile) {
   unsigned int start_time=millis();
-  unsigned int check_time=0;
-  unsigned int last_time=0;
+  int check_time=start_time;
+  int last_time=start_time;
   unsigned int _2seconds=2000;
   unsigned int acid_start_time=0;
   unsigned int integration_start_time=0;
   unsigned int sample_wait_start_time=0;
+
+  if (debug) Serial.println("Initial detection");
   result_vec.push_back(detect_co2(k30));  // 1
-  
+  if (debug) Serial.println("End of detection");
 //  strip_chamber(strip,CLOSE,OPEN);
-  strip.open(); // OR CLOSE!?!?!
+  if (debug) Serial.println("Strip chamber open to SAMPLE");
+  strip.close();
+  
   // TODO: actuate acid pump; push acid_volume into stripping chamber; has delay
+  if (debug) Serial.println("Pumping acid into strip chamber");
   digitalWrite(acid_pump, HIGH);
   delay(2000);
   digitalWrite(acid_pump, LOW);
   // END ACID PUMP - ASK ABOUT THIS
-  while(check_time=millis()-start_time < _2seconds)
+
+  if (debug) Serial.println("Waiting to detect");
+  check_time=millis()-start_time;
+  while(check_time < _2seconds)
   ;
+  if (debug) Serial.println("DETECTING");
   result_vec.push_back(detect_co2(k30));  // 2
   acid_start_time=millis();
-  
+
+  if (debug) Serial.println("Filling control syringe with sample");
   fill_sample(syringe);
-  
-  while(last_time=millis()-check_time < _2seconds)
+
+  if (debug) Serial.println("Waiting to detect");
+  last_time=millis()-check_time;
+  while(last_time < _2seconds)
   ;
+  if (debug) Serial.println("DETECTING");
   result_vec.push_back(detect_co2(k30));  // 3
   
   check_time=last_time;
 
+  if (debug) Serial.println("Waiting for acid_wait_time to elapse");
   while(millis()-acid_start_time < acid_wait_time) {
     // Making sure we waiting the entired acid wait time
-    while(last_time=millis()-check_time < _2seconds)  // Might be too long, might not matter tho
-    ;
-    result_vec.push_back(detect_co2(k30));
+//    while(last_time=millis()-check_time < _2seconds)  // Might be too long, might not matter tho
+//    ;
+//   
+//    if (debug) {
+//      Serial.print("millis(): ");
+//      Serial.println(millis());
+//      Serial.print("last_time: ");
+//      Serial.println(last_time);
+//      Serial.print("check_time: ");
+//      Serial.println(check_time);
+//       Serial.print("_2seconds: ");
+//      Serial.println(_2seconds);
+//      Serial.print("over 2 seconds?: ");
+//      Serial.println(last_time > _2seconds);
+//    }
     
-    check_time=last_time;
-  }
+    last_time=millis()-check_time;
+    if(last_time > _2seconds) {
+      if (debug) Serial.println("DETECTING");
+      result_vec.push_back(detect_co2(k30));
+      check_time=millis();
+    }
+//    result_vec.push_back(detect_co2(k30));
+    
+    
+  }  
+  
+  if (debug) Serial.println("CONTROL SYRINGE Pushing into stripping chamber");
   control_syringe(syringe,CLOSE,OPEN);
 //  sample_stripping_chamber(syringe);
 
   integration_start_time=check_time=millis();
 
+  if (debug) Serial.println("BOUT TO DO DAT SPHECIAL PUMP THO");
   for(int i=0;i<spd_2_steps(syringe_sample_speed);i++) { //???????????? pump full volume at normal speed
+    //if (debug) Serial.println("\tSPHECIAL PUMPIN IT...");
     syringe.special_pump(OUT);
-    
-    if(last_time=millis()-check_time > _2seconds) {
+    last_time=millis()-check_time;
+    if(last_time > _2seconds) {
+      if (debug) Serial.println("\tDETECTING...");
       result_vec.push_back(detect_co2(k30));
-      check_time=last_time;
+      check_time=millis();
     } 
   }
 
-  while(millis() - integration_start_time < integration_time)  {// Might be too long, might not matter tho
-    if(last_time=millis()-check_time > _2seconds) {
+  if (debug) Serial.println("WAITIN FER DAT INTEGRASHUN TIME");
+  int temp = millis() - integration_start_time;
+  while(temp < integration_time)  {// Might be too long, might not matter tho
+    last_time=millis()-check_time;
+    if(last_time > _2seconds) {
+      if (debug) Serial.println("\tDETECTING...");
       result_vec.push_back(detect_co2(k30));
-      check_time=last_time;
-    } 
+      check_time=millis();
+    }
+    temp = millis() - integration_start_time;
   }
-    result_vec.push_back(detect_co2(k30));
+//
+//  if (debug) Serial.println("Waiting for FINAL detection");
+//  while(last_time=millis()-check_time < _2seconds)
+//  ;
+//  if (debug) Serial.println("DETECTING...");
+//  result_vec.push_back(detect_co2(k30));
   
   sample_wait_start_time=check_time=millis();
-  while(millis() - sample_wait_start_time < sample_wait_time) {
-    if(last_time=millis()-check_time > _2seconds) {
+  if (debug) Serial.println("Waiting for sample_wait_time to elapse");
+  temp = millis() - sample_wait_start_time;
+  while(temp < sample_wait_time) {
+    last_time=millis()-check_time;
+    if(last_time > _2seconds) {
+      if (debug) Serial.println("\tDETECTING...");
       result_vec.push_back(detect_co2(k30));
-      check_time=last_time;
+      check_time=millis();
     } 
+    temp = millis() - sample_wait_start_time;
   }
 
 //  strip_chamber(strip,OPEN,CLOSE);
-  strip.open(); // or CLOSE?!?!?
-  // set valves and shit
-
+  Serial.println("Strip chamber open to WASTE");
+  strip.open();
+  
   // write results to file
+  Serial.println("Write to file");
   write_out(myFile);
+
+  delay(2000);
 }
 
 /*
@@ -341,6 +420,7 @@ void Benchtop::record_sample_temp() {
  * Fill Sample w/ Syringe Pump?  Might want to make one function with one above and  and use input argument
  */
 void Benchtop::fill_sample(Pump & pump) {
+  if (debug) Serial.println("\t\tPumping IN");
   pump.pump(vol_2_steps(sample_volume),IN);
 }
 
@@ -377,6 +457,7 @@ int Benchtop::spd_2_steps(float spd) { // TODO: CALCULATE THIS SHIT
 
 void Benchtop::write_out(File & myFile) {
   for (int i = 0; i < result_vec.size(); i++) {
+    Serial.println(result_vec[i]);
     myFile.println(result_vec[i]);
   }
 }

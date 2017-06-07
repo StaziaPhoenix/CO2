@@ -29,9 +29,15 @@ void K30::initialize() {
 
 void K30::sendRequest()
 {
+  byte numTries = 0;
   while(!K_30_Serial.available())  //keep sending request until we start to get a response
   {
+    if (numTries > 10) {
+      Serial.println("k30 not available");
+      return;
+    }
     K_30_Serial.write(commandPacket,7);
+    numTries++;
     delay(50);
   }
   

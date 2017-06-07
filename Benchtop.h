@@ -143,6 +143,7 @@ class Benchtop {
         void analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile);
     
     private:
+        byte debug = 1;
         float syringe_rinse_speed;
         float rinse_volume;
         float rinse_time;

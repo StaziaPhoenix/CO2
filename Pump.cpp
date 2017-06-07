@@ -79,9 +79,7 @@ void Pump::special_pump(bool dir) {
   } else if(!dir){
     step_mtr_set_dir(LOW);  // Set stepper motor (pump) to move inwards (i.e. dir=0)
     Serial.println("This pump is moving in");
-  }
-
-  Serial.println("This pump is moving!");  
+  } 
     
   step_mtr_actuate(HIGH);
   delay(9); // on for 9ms

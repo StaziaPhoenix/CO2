@@ -16,15 +16,15 @@
  * @param valve_output_drv output valve driver/control pin (valve2)
  */
 Benchtop::Benchtop() {
-    syringe_rinse_speed=  0.0;
-    rinse_volume=         0.0;
-    rinse_time=           0.0;
-    acid_volume=          0.0;
-    acid_wait_time=       0.0;
-    sample_volume=        0.0;
-    syringe_sample_speed= 0.0;
-    sample_wait_time=     0.0;
-    integration_time=     0.0;
+    syringe_rinse_speed=  3000.0;
+    rinse_volume=         750.0;
+    rinse_time=           5.0*1000;
+    acid_volume=          20.0;
+    acid_wait_time=       40.0*1000;
+    sample_volume=        750.0;
+    syringe_sample_speed= 500.0;
+    sample_wait_time=     10.0*1000;
+    integration_time=     145.0*1000;
 }
 
 

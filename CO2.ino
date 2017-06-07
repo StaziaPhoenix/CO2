@@ -1,6 +1,7 @@
 // NOTE:  Need No line ending for prints to line up
 
 #include "Pump.h"
+#include "Pinch.h"
 #include "K30.h"
 #include "Benchtop.h"
 #include "Vector.h"
@@ -74,13 +75,14 @@ int menu = MAIN;
 #define cs_output_pin 6   // control syringe output valve
 
 #define sc_mtr_drv 3        // pump steppin
-#define sc_mtr_dir 5        // pump dirpin
-#define sc_waste_pin 11    // pump input valve
-#define sc_sample_pin 10   // pump output valve
+//#define sc_mtr_dir 5        // pump dirpin
+//#define sc_waste_pin 11    // pump input valve
+//#define sc_sample_pin 10   // pump output valve
 
 // Valve & Pump
 Pump control_syringe(cs_mtr_drv,cs_mtr_dir,cs_input_pin,cs_output_pin); // Initialize pump object
-Pump strip_chamber(sc_mtr_drv,sc_mtr_dir,sc_waste_pin,sc_sample_pin); // Initialize pump object
+Pinch strip_chamber(sc_mtr_drv); // Initialize pump object
+
 //Pump(step motor/valve drive pin,step motor/valve direction pin,valve1/input-valve pin,valve2/output-valve pin);
 
 K30 k30(rx, tx);
@@ -204,8 +206,8 @@ void do_serial_cmd(byte cmd) {
         case('r'): // run analysis
           myFile = SD.open(sample_name, FILE_WRITE);
           myFile.println(sample_name);
-          benchtop.rinse(control_syringe,strip_chamber);
-          benchtop.analysis(control_syringe,strip_chamber,k30,acid_pump,myFile);
+          benchtop.rinse(strip_chamber,control_syringe);
+          benchtop.analysis(strip_chamber,control_syringe,k30,acid_pump,myFile);
           myFile.close();
           print_new_cmd_line();
           break;

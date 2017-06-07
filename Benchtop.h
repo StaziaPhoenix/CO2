@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include "Pump.h"
+#include "Pinch.h"
 #include "K30.h"
 #include "Vector.h"
 #include <SD.h>
@@ -134,12 +135,12 @@ class Benchtop {
         /*
          * Rinse state
          */
-        void rinse(Pump & strip,Pump & syringe);
+        void rinse(Pinch & strip,Pump & syringe);
 
         /*
          * Start analysis
          */
-        void analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile);
+        void analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile);
     
     private:
         float syringe_rinse_speed;

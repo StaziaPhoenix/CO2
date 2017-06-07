@@ -181,14 +181,15 @@ float Benchtop::get_integration_time() {
 /*
  * Rinse state
  */
-void Benchtop::rinse(Pump & strip,Pump & syringe) {
+void Benchtop::rinse(Pinch & strip,Pump & syringe) {
   control_syringe(syringe,OPEN,CLOSE);
   //strip_chamber(strip,OPEN,CLOSE);
 //  digitalWrite(??,HIGH);
   fill_rinse(syringe);
 
   // Rinse into stripping chamber
-  control_syringe(strip,CLOSE,OPEN);
+//  control_syringe(strip,CLOSE,OPEN);
+  strip.open();
   //strip_chamber(syringe,CLOSE,OPEN);
  // digitalWrite(??,LOW)
   rinse_stripping_chamber(syringe);
@@ -238,7 +239,7 @@ void Benchtop::empty_rinse() {
 /*
  * Start analysis
  */
-void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile) {
+void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile) {
   unsigned int start_time=millis();
   unsigned int check_time=0;
   unsigned int last_time=0;
@@ -248,7 +249,8 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump, Fi
   unsigned int sample_wait_start_time=0;
   result_vec.push_back(detect_co2(k30));  // 1
   
-  strip_chamber(strip,CLOSE,OPEN);
+//  strip_chamber(strip,CLOSE,OPEN);
+  strip.open(); // OR CLOSE!?!?!
   // TODO: actuate acid pump; push acid_volume into stripping chamber; has delay
   digitalWrite(acid_pump, HIGH);
   delay(2000);
@@ -305,7 +307,8 @@ void Benchtop::analysis(Pump & strip,Pump & syringe,K30 & k30,byte acid_pump, Fi
     } 
   }
 
-  strip_chamber(strip,OPEN,CLOSE);
+//  strip_chamber(strip,OPEN,CLOSE);
+  strip.open(); // or CLOSE?!?!?
   // set valves and shit
 
   // write results to file

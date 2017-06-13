@@ -471,12 +471,18 @@ void Benchtop::empty_stripping_chamber() {
 
 int Benchtop::vol_2_steps(float volume) { // TODO: CALCULATE THIS SHIT
 //  return volume;
-  return 500; 
+//  return 500; 
+// Transforming user inputs into usable variables for srynge pump
+  return round(volume/1.5);                   // volume should almost always be 750, round is to prevent user error  
+  
 }
 
-int Benchtop::spd_2_delay(float spd) { // TODO: CALCULATE THIS SHIT
+int Benchtop::spd_2_delay(float rate) { // TODO: CALCULATE THIS SHIT
 //  return spd;
-  return 500;
+//  return 500;
+// Transforming user inputs into usable variables for srynge pump
+  return round((1/(rate/(1.5*60*1000)))-9);  // this converts the microL/min into a delay used to control speed of pump 
+                                                        // again, the round is to prevent user error. std input of 500 or 3000 will not utilize round function
 }
 
 void Benchtop::write_out(File & myFile) {

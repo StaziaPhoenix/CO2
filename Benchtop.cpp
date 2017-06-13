@@ -269,9 +269,13 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, F
   unsigned int acid_start_time=0;
   unsigned int integration_start_time=0;
   unsigned int sample_wait_start_time=0;
+  int reading;
 
   if (debug) Serial.println("Initial detection");
-  result_vec.push_back(detect_co2(k30));  // 1
+  if (debug) Serial.print("\tDETECTING...");
+  reading = detect_co2(k30);
+  result_vec.push_back(reading);
+  if (debug) Serial.println(reading);
   if (debug) Serial.println("End of detection");
 //  strip_chamber(strip,CLOSE,OPEN);
   if (debug) Serial.println("Strip chamber open to SAMPLE");
@@ -288,8 +292,10 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, F
   check_time=millis()-start_time;
   while(check_time < _2seconds)
   ;
-  if (debug) Serial.println("DETECTING");
-  result_vec.push_back(detect_co2(k30));  // 2
+  if (debug) Serial.print("\tDETECTING...");
+  reading = detect_co2(k30);
+  result_vec.push_back(reading);
+  if (debug) Serial.println(reading);
   acid_start_time=millis();
 
   if (debug) Serial.println("Filling control syringe with sample");
@@ -299,8 +305,10 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, F
   last_time=millis()-check_time;
   while(last_time < _2seconds)
   ;
-  if (debug) Serial.println("DETECTING");
-  result_vec.push_back(detect_co2(k30));  // 3
+  if (debug) Serial.print("\tDETECTING...");
+  reading = detect_co2(k30);
+  result_vec.push_back(reading);
+  if (debug) Serial.println(reading);
   
   check_time=last_time;
 
@@ -325,8 +333,10 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, F
     
     last_time=millis()-check_time;
     if(last_time > _2seconds) {
-      if (debug) Serial.println("DETECTING");
-      result_vec.push_back(detect_co2(k30));
+      if (debug) Serial.print("\tDETECTING...");
+      reading = detect_co2(k30);
+      result_vec.push_back(reading);
+      if (debug) Serial.println(reading);
       check_time=millis();
     }
 //    result_vec.push_back(detect_co2(k30));
@@ -340,25 +350,29 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, F
 
   integration_start_time=check_time=millis();
 
-  if (debug) Serial.println("BOUT TO DO DAT SPHECIAL PUMP THO");
+  if (debug) Serial.println("Pumping sample into stripping chamber");
   for(int i=0;i<spd_2_steps(syringe_sample_speed);i++) { //???????????? pump full volume at normal speed
     //if (debug) Serial.println("\tSPHECIAL PUMPIN IT...");
     syringe.special_pump(OUT);
     last_time=millis()-check_time;
     if(last_time > _2seconds) {
-      if (debug) Serial.println("\tDETECTING...");
-      result_vec.push_back(detect_co2(k30));
+      if (debug) Serial.print("\tDETECTING...");
+      reading = detect_co2(k30);
+      result_vec.push_back(reading);
+      if (debug) Serial.println(reading);
       check_time=millis();
     } 
   }
 
-  if (debug) Serial.println("WAITIN FER DAT INTEGRASHUN TIME");
+  if (debug) Serial.println("Waiting for integration time to elapse");
   int temp = millis() - integration_start_time;
   while(temp < integration_time)  {// Might be too long, might not matter tho
     last_time=millis()-check_time;
     if(last_time > _2seconds) {
-      if (debug) Serial.println("\tDETECTING...");
-      result_vec.push_back(detect_co2(k30));
+      if (debug) Serial.print("\tDETECTING...");
+      reading = detect_co2(k30);
+      result_vec.push_back(reading);
+      if (debug) Serial.println(reading);
       check_time=millis();
     }
     temp = millis() - integration_start_time;
@@ -376,8 +390,10 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, F
   while(temp < sample_wait_time) {
     last_time=millis()-check_time;
     if(last_time > _2seconds) {
-      if (debug) Serial.println("\tDETECTING...");
-      result_vec.push_back(detect_co2(k30));
+      if (debug) Serial.print("\tDETECTING...");
+      reading = detect_co2(k30);
+      result_vec.push_back(reading);
+      if (debug) Serial.println(reading);
       check_time=millis();
     } 
     temp = millis() - sample_wait_start_time;

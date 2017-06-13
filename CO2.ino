@@ -14,8 +14,8 @@ Vector<int> vec;
 
 #define startswitch 9 //Button pin
 
-#define rx 12
-#define tx 13
+#define k30_rx 12
+#define k30_tx 13
 
 #define MAIN 0
 #define PARAMETER 1
@@ -86,7 +86,7 @@ Pinch strip_chamber(sc_mtr_drv); // Initialize pump object
 
 //Pump(step motor/valve drive pin,step motor/valve direction pin,valve1/input-valve pin,valve2/output-valve pin);
 
-K30 k30(rx, tx);
+K30 k30(k30_rx, k30_tx);
 
 // CLI vars
 byte ack=0;
@@ -212,7 +212,7 @@ void do_serial_cmd(byte cmd) {
             break;
           }
           Serial.println("BEGIN RINSE\n");
-//          benchtop.rinse(strip_chamber,control_syringe);
+          benchtop.rinse(strip_chamber,control_syringe);
           Serial.println("\nEND RINSE\n");
           Serial.println("\nBEGIN ANALYSIS\n");
           benchtop.analysis(strip_chamber,control_syringe,k30,acid_pump,myFile);

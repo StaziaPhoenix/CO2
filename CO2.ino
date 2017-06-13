@@ -154,13 +154,14 @@ void detect() {
 // Test Control Syringe
 void actuatePump() {
     int stepSize = 500;
+    int stepDelay = 11;
     
     control_syringe.set_valve_dirs(HIGH,LOW);  // OPEN INPUT VALVE (VALVE 1), CLOSE OUTPUT VALVE (VALVE 2)
-    control_syringe.pump(stepSize,IN);
+    control_syringe.pump(stepSize,stepDelay,IN);
     Serial.println("I pumped in");
     
     control_syringe.set_valve_dirs(LOW,HIGH);  // CLOSE INPUT VALVE (VALVE 1), OPEN OUTPUT VALVE (VALVE 2)
-    control_syringe.pump(stepSize,OUT);
+    control_syringe.pump(stepSize,stepDelay,OUT);
     Serial.println("I pumped out");
      delay(200);
 }

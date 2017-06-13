@@ -14,6 +14,8 @@
 #define OUT 1         //Set direction out to be 1
 #define IN 0          //Set direction in to be 0
 
+#define BASE_SPEED 11 // Defined to be base/default speed
+
 class Benchtop {
   
    public:
@@ -227,7 +229,7 @@ class Benchtop {
         void empty_stripping_chamber();
 
         int vol_2_steps(float volume);
-        int spd_2_steps(float spd);
+        int spd_2_delay(float spd);
 
         void write_out(File & myFile);
 };

@@ -28,11 +28,12 @@ class Pump {
          * Actuates the valves and pump in a direction for a given step size
          * 
          * @param step_size how many times to perform a "micro" pump
+         * @param delay how long to wait for pump
          * @param direction in which to pump, 1 for outward, 0 for inward
          */
-        void pump(int step_size, bool dir);
+        void pump(int step_size,int _delay,bool dir);
 
-        void special_pump(bool dir);
+        void special_pump(int _delay,bool dir);
     
     private:
         byte step_mtr_drv;        // Stepper motor driver pin

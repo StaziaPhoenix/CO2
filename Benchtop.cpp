@@ -254,7 +254,7 @@ void Benchtop::fill_rinse(Pump & pump) {
  */
 void Benchtop::rinse_stripping_chamber(Pump & pump) {
   if (debug) Serial.println("\t\tPumping Out");
-  pump.pump(vol_2_steps(sample_volume),spd_2_delay(syringe_sample_speed),OUT);
+  pump.pump(vol_2_steps(rinse_volume),BASE_DELAY,OUT);
 }
 
 /*

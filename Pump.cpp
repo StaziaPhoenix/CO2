@@ -49,9 +49,10 @@ void Pump::set_valve_dirs(bool input_valve_dir,bool output_valve_dir) {
  * Actuates the valves and pump in a direction for a given step size
  * 
  * @param step_size how many times to perform a "micro" pump
+ * @param delay how long to wait for pump
  * @param direction in which to pump, 1 for outward, 0 for inward
  */
-void Pump::pump(int step_size, bool dir) {
+void Pump::pump(int step_size, int _delay, bool dir) {
   if(dir) {
     step_mtr_set_dir(HIGH); // Set stepper motor (pump) to move outwards (i.e. dir=1)
     //Serial.println("This pump is moving out");
@@ -67,11 +68,11 @@ void Pump::pump(int step_size, bool dir) {
     step_mtr_actuate(HIGH);
     delay(9); // on for 9ms
     step_mtr_actuate(LOW);
-    delay(11);  // off for 11ms or 30ms?
+    delay(_delay);  // off for 11ms or 30ms?
   }
 }
 
-void Pump::special_pump(bool dir) {
+void Pump::special_pump(int _delay,bool dir) {
   if(dir) {
     step_mtr_set_dir(HIGH); // Set stepper motor (pump) to move outwards (i.e. dir=1)
     //Serial.println("This pump is moving out");
@@ -83,7 +84,7 @@ void Pump::special_pump(bool dir) {
   step_mtr_actuate(HIGH);
   delay(9); // on for 9ms
   step_mtr_actuate(LOW);
-  delay(11);  // off for 11ms or 30ms?
+  delay(_delay);  // off for 11ms or 30ms?
 }
 
 

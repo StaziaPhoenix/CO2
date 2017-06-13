@@ -1,7 +1,7 @@
 /*
  *  SIO 190 - CO2 Analyzer 
  *  
- *  Coded by:  Stazia Tronboll && Colin Keef (ProfSwirlyEyes@gmail.com)
+ *  Coded by:  Stazia Tronboll && Colin "MrSwirlyEyes" Keef (ProfSwirlyEyes@gmail.com)
  *  
  *  Version: 1
  */

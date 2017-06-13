@@ -36,7 +36,7 @@ int input;                 //Initialize serial input
 #define PARAMETER 1
 byte ack=0;
 #define NONE 130
-#define NOT_YET_STR "Not Implemented Yet"
+#define NOT_YET_STR "\rNot Implemented Yet"
 int menu = MAIN;
 
 typedef float (Benchtop::*getter)();
@@ -110,9 +110,9 @@ void setup() {
 
   Serial.begin(9600);
   
-  Serial.print("Initializing SD card...");
+  Serial.print("\rInitializing SD card...");
   if (!SD.begin(_sd)) {
-    Serial.println("initialization failed!");
+    Serial.println("Initialization failed!\r");
     return;
   }
   Serial.println("Initialization done.");
@@ -145,7 +145,7 @@ void loop() {
 void detect() {
   k30.sendRequest();
   unsigned long valCO2 = k30.getValue();
-  Serial.print("Co2 ppm = ");
+  Serial.print("\rCo2 ppm = ");
   Serial.println(valCO2);
 }
 
@@ -158,11 +158,11 @@ void actuatePump() {
     
     control_syringe.set_valve_dirs(HIGH,LOW);  // OPEN INPUT VALVE (VALVE 1), CLOSE OUTPUT VALVE (VALVE 2)
     control_syringe.pump(stepSize,stepDelay,IN);
-    Serial.println("I pumped in");
+    Serial.println("\rI pumped in");
     
     control_syringe.set_valve_dirs(LOW,HIGH);  // CLOSE INPUT VALVE (VALVE 1), OPEN OUTPUT VALVE (VALVE 2)
     control_syringe.pump(stepSize,stepDelay,OUT);
-    Serial.println("I pumped out");
+    Serial.println("\rI pumped out");
      delay(200);
 }
 
@@ -175,35 +175,35 @@ void actuatePump() {
 
 // Prints the command list
 void print_cmd_list() {
-    Serial.print("\nCommands:\r\n");
+    Serial.print("\r\nCommands:\r\n");
     // new commands here
-    Serial.print("\t<p>\tParameters Menu\n");
-    Serial.print("\t<r>\tRun\n");
-    Serial.print("\t<c>\tClean\n");
-    Serial.print("\t<0>\tTest Syringe Pump\n");
-    Serial.print("\t<1>\tTest Relays (Acid pump and strip chamber)\n");
-    Serial.print("\t<2>\tTest K30\n");
-    Serial.print("\t<h>\tPrint Command List\n");
-    Serial.println();
+    Serial.print("\r\t<p>\tParameters Menu\n");
+    Serial.print("\r\t<r>\tRun\n");
+    Serial.print("\r\t<c>\tClean\n");
+    Serial.print("\r\t<0>\tTest Syringe Pump\n");
+    Serial.print("\r\t<1>\tTest Relays (Acid pump and strip chamber)\n");
+    Serial.print("\r\t<2>\tTest K30\n");
+    Serial.print("\r\t<h>\tPrint Command List\n");
+    Serial.println("\r");
 }
 
 
 
 // Prints the Parameter Menu
 void print_parameter_menu() {
-    Serial.print("\nParameters:\r\n");
+    Serial.print("\r\nParameters:\r\n");
         // new commands here
-        Serial.print("\t<1>\tSyringe Rinse Speed (ul/min)\t\t\t"); Serial.println(benchtop.get_syringe_rinse_speed());
-        Serial.print("\t<2>\tRinse Volume (uL)\t\t\t"); Serial.println(benchtop.get_rinse_volume());
-        Serial.print("\t<3>\tRinse Time (ms)\t\t\t\t"); Serial.println(benchtop.get_rinse_time());
-        Serial.print("\t<4>\tAcid Volume (uL)\t\t\t"); Serial.println(benchtop.get_acid_volume());
-        Serial.print("\t<5>\tAcid Wait Time (ms)\t\t\t"); Serial.println(benchtop.get_acid_wait_time());
-        Serial.print("\t<6>\tSample Volume (uL)\t\t\t"); Serial.println(benchtop.get_sample_volume());
-        Serial.print("\t<7>\tSyringe Sample Speed (uL/m)\t\t"); Serial.println(benchtop.get_syringe_sample_speed());
-        Serial.print("\t<8>\tSample Wait Time(ms)\t\t\t"); Serial.println(benchtop.get_sample_wait_time());
-        Serial.print("\t<9>\tIntegration Time(ms)\t"); Serial.println(benchtop.get_integration_time());
-        Serial.print("\t<h>\tReturn to main menu\n");
-    Serial.println();
+        Serial.print("\r\t<1>\tSyringe Rinse Speed (ul/min)\t\t\t"); Serial.println(benchtop.get_syringe_rinse_speed());
+        Serial.print("\r\t<2>\tRinse Volume (uL)\t\t\t"); Serial.println(benchtop.get_rinse_volume());
+        Serial.print("\r\t<3>\tRinse Time (ms)\t\t\t\t"); Serial.println(benchtop.get_rinse_time());
+        Serial.print("\r\t<4>\tAcid Volume (uL)\t\t\t"); Serial.println(benchtop.get_acid_volume());
+        Serial.print("\r\t<5>\tAcid Wait Time (ms)\t\t\t"); Serial.println(benchtop.get_acid_wait_time());
+        Serial.print("\r\t<6>\tSample Volume (uL)\t\t\t"); Serial.println(benchtop.get_sample_volume());
+        Serial.print("\r\t<7>\tSyringe Sample Speed (uL/m)\t\t"); Serial.println(benchtop.get_syringe_sample_speed());
+        Serial.print("\r\t<8>\tSample Wait Time(ms)\t\t\t"); Serial.println(benchtop.get_sample_wait_time());
+        Serial.print("\r\t<9>\tIntegration Time(ms)\t"); Serial.println(benchtop.get_integration_time());
+        Serial.print("\r\t<h>\tReturn to main menu\n");
+    Serial.println("\r");
 }
 
 
@@ -221,22 +221,22 @@ void do_serial_cmd(byte cmd) {
           myFile = SD.open(file_name, FILE_WRITE);
           myFile.println(sample_name);
           if (!myFile) {
-            Serial.println("Garbage.");
+            Serial.println("\rGarbage.");
             break;
           }
-          Serial.println("BEGIN RINSE\n");
+          Serial.println("\rBEGIN RINSE\n");
           benchtop.rinse(strip_chamber,control_syringe);
-          Serial.println("\nEND RINSE\n");
-          Serial.println("\nBEGIN ANALYSIS\n");
+          Serial.println("\r\nEND RINSE\n");
+          Serial.println("\r\nBEGIN ANALYSIS\n");
           benchtop.analysis(strip_chamber,control_syringe,k30,acid_pump,myFile);
-          Serial.println("\nEND ANALYSIS\n");
+          Serial.println("\r\nEND ANALYSIS\n");
           myFile.close();
           print_new_cmd_line();
           break;
         case('c'): // run cleaning cycle
-          Serial.println("BEGIN RINSE\n");
+          Serial.println("\rBEGIN RINSE\n");
           benchtop.rinse(strip_chamber,control_syringe);
-          Serial.println("\nEND RINSE\n");
+          Serial.println("\r\nEND RINSE\n");
           print_new_cmd_line();
           break;
         case('0'): // test the syringe pump system
@@ -246,16 +246,16 @@ void do_serial_cmd(byte cmd) {
           print_new_cmd_line();
           break;
         case('1'): // test the relays
-          Serial.println("TURNING ON ACID PUMP");
+          Serial.println("\rTURNING ON ACID PUMP");
           acid_pump.open();
           delay(500);
-          Serial.println("TURNING OFF ACID PUMP");
+          Serial.println("\rTURNING OFF ACID PUMP");
           acid_pump.close();
           delay(500);
-          Serial.println("OPENING STRIP CHAMBER TO WASTE");
+          Serial.println("\rOPENING STRIP CHAMBER TO WASTE");
           strip_chamber.open();
           delay(500);
-          Serial.println("CLOSING STRIP CHAMBER TO WASTE (OPEN TO SAMPLE)");
+          Serial.println("\rCLOSING STRIP CHAMBER TO WASTE (OPEN TO SAMPLE)");
           strip_chamber.close();
           delay(500);
           break;
@@ -279,7 +279,7 @@ void do_serial_cmd(byte cmd) {
 
 // Updates variables from user into CLI
 void updateVariable(byte idx) {
-  Serial.print("\tEnter the value you want to set.\n");
+  Serial.print("\r\tEnter the value you want to set.\n");
   while (!Serial.available()) {
     delay(5);
   }
@@ -319,8 +319,8 @@ void do_parameter_cmd(byte cmd) {
 
 // Waits for acknowledgement from the user on first boot
 bool get_ack() {
-    Serial.println("\nPress <h> for command list");
-    Serial.print(">");
+    Serial.println("\r\nPress <h> for command list");
+    Serial.print("\r>");
     byte in_byte=Serial.read();
 
     if(in_byte == 'h') {
@@ -350,6 +350,6 @@ byte get_serial_cmd() {
 
 // Prints new command line delimiter
 void print_new_cmd_line() {
-  Serial.print(">");
+  Serial.print("\r>");
 }
 

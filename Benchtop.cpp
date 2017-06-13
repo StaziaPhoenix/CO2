@@ -199,31 +199,31 @@ void Benchtop::flush(Pump & syringe) {
  * Rinse state
  */
 void Benchtop::rinse(Pinch & strip,Pump & syringe) {
-  if (debug) Serial.println("Control syringe open to SAMPLE");
+  if (debug) Serial.println("\rControl syringe open to SAMPLE");
   control_syringe(syringe,OPEN,CLOSE);
   //strip_chamber(strip,OPEN,CLOSE);
 
-  if (debug) Serial.println("Strip chamber open to WASTE");
+  if (debug) Serial.println("\rStrip chamber open to WASTE");
   strip.open();
 
-  if (debug) Serial.println("Filling control syringe with rinse");
+  if (debug) Serial.println("\rFilling control syringe with rinse");
   fill_rinse(syringe);
 
   // Rinse into stripping chamber
 //  control_syringe(strip,CLOSE,OPEN);
-  if (debug) Serial.println("Strip chamber open to SAMPLE");
+  if (debug) Serial.println("\rStrip chamber open to SAMPLE");
   strip.close();
 //strip_chamber(syringe,CLOSE,OPEN);
 
-  if (debug) Serial.println("Filling strip chamber with sample");
+  if (debug) Serial.println("\rFilling strip chamber with sample");
   rinse_stripping_chamber(syringe);
 
-  if (debug) Serial.println("Waiting for rinse time to elapse");
+  if (debug) Serial.println("\rWaiting for rinse time to elapse");
   delay(this->rinse_time);
 
   // TODO: Empty rinse
  //strip_chamber(strip,OPEN,CLOSE);
-  if (debug) Serial.println("Strip chamber open to WASTE");
+  if (debug) Serial.println("\rStrip chamber open to WASTE");
   strip.open();
 }
 
@@ -245,7 +245,7 @@ void Benchtop::strip_chamber(Pump & pump,bool sample,bool strip) {
  * Fill Rinse w/ Syringe Pump?
  */
 void Benchtop::fill_rinse(Pump & pump) {
-  if (debug) Serial.println("\t\tPumping In");
+  if (debug) Serial.println("\r\t\tPumping In");
   pump.pump(vol_2_steps(rinse_volume),BASE_DELAY,IN);
 }
 
@@ -253,7 +253,7 @@ void Benchtop::fill_rinse(Pump & pump) {
  * Rinse into Stripping Chamber
  */
 void Benchtop::rinse_stripping_chamber(Pump & pump) {
-  if (debug) Serial.println("\t\tPumping Out");
+  if (debug) Serial.println("\r\t\tPumping Out");
   pump.pump(vol_2_steps(rinse_volume),BASE_DELAY,OUT);
 }
 

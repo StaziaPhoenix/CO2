@@ -16,16 +16,16 @@
  * @param valve_output_drv output valve driver/control pin (valve2)
  */
 Benchtop::Benchtop() {
-    syringe_rinse_speed=  3000.0;
-    rinse_volume=         750.0;
-    rinse_time=           5.0*1000;
-    acid_volume=          20.0;
-    acid_wait_time=       40.0*1000;
-    sample_volume=        750.0;
-    syringe_sample_speed= 500.0;
-    sample_wait_time=     10.0*1000;
-    //integration_time=     145.0*1000;
-    integration_time=     30.0*1000;
+    syringe_rinse_speed =  3000.0;
+    rinse_volume        =  750.0;
+    rinse_time          =  5.0*1000;
+    acid_volume         =  20.0;
+    acid_wait_time      =  40.0*1000;
+    sample_volume       =  750.0;
+    syringe_sample_speed=  500.0;
+    sample_wait_time    =  10.0*1000;
+    //integration_time  =  145.0*1000;
+    integration_time    =  30.0*1000;
 
 //    syringe_rinse_speed=  10.0;
 //    rinse_volume=         10.0;
@@ -193,7 +193,7 @@ float Benchtop::get_integration_time() {
 
 void Benchtop::flush(Pump & syringe) {
   syringe.set_valve_dirs(LOW,LOW);  // Open both input valve and output valve
-  syringe.pump(500,11,OUT);            //Drain the pump and plumbing
+  syringe.pump(500,OUT);            //Drain the pump and plumbing
 }
 /*
  * Rinse state
@@ -246,7 +246,7 @@ void Benchtop::strip_chamber(Pump & pump,bool sample,bool strip) {
  */
 void Benchtop::fill_rinse(Pump & pump) {
   if (debug) Serial.println("\t\tPumping In");
-  pump.pump(vol_2_steps(rinse_volume),BASE_SPEED,IN);
+  pump.pump(vol_2_steps(rinse_volume),IN);
 }
 
 /*
@@ -254,7 +254,7 @@ void Benchtop::fill_rinse(Pump & pump) {
  */
 void Benchtop::rinse_stripping_chamber(Pump & pump) {
   if (debug) Serial.println("\t\tPumping Out");
-  pump.pump(vol_2_steps(rinse_volume),spd_2_delay(syringe_sample_speed),OUT);
+  pump.pump(spd_2_steps(syringe_sample_speed),OUT);
 }
 
 /*
@@ -359,9 +359,9 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,Pinch & acid_pump
   integration_start_time=check_time=millis();
 
   if (debug) Serial.println("Pumping sample into stripping chamber");
-  for(int i=0;i<spd_2_delay(syringe_sample_speed);i++) { //???????????? pump full volume at normal speed
+  for(int i=0;i<spd_2_steps(syringe_sample_speed);i++) { //???????????? pump full volume at normal speed
     //if (debug) Serial.println("\tSPHECIAL PUMPIN IT...");
-    syringe.special_pump(spd_2_delay(syringe_sample_speed),OUT);
+    syringe.special_pump(OUT);
     last_time=millis()-check_time;
     if(last_time > _2seconds) {
       if (debug) Serial.print("\tDETECTING...");
@@ -445,7 +445,7 @@ void Benchtop::record_sample_temp() {
  */
 void Benchtop::fill_sample(Pump & pump) {
   if (debug) Serial.println("\t\tPumping IN");
-  pump.pump(vol_2_steps(sample_volume),spd_2_delay(syringe_sample_speed),IN);
+  pump.pump(vol_2_steps(sample_volume),IN);
 }
 
 /*
@@ -459,7 +459,7 @@ void Benchtop::start_peak_integration() {
  * Sample stripping chamber during analysis
  */
 void Benchtop::sample_stripping_chamber(Pump & pump) {
-  pump.pump(vol_2_steps(sample_volume),spd_2_delay(syringe_sample_speed),OUT);
+  pump.pump(spd_2_steps(syringe_sample_speed),OUT);
 }
 
 /*
@@ -471,16 +471,12 @@ void Benchtop::empty_stripping_chamber() {
 
 int Benchtop::vol_2_steps(float volume) { // TODO: CALCULATE THIS SHIT
 //  return volume;
-//  return 500; 
-    // Transforming user inputs into usable variables for srynge pump
-  return round(volume/1.5);                   // volume should almost always be 750, round is to prevent user error 
+  return 500; 
 }
 
-int Benchtop::spd_2_delay(float spd) { // TODO: CALCULATE THIS SHIT
+int Benchtop::spd_2_steps(float spd) { // TODO: CALCULATE THIS SHIT
 //  return spd;
-//  return 500;
-  return round((1/(spd/(1.5*60*1000)))-9);  // this converts the microL/min into a delay used to control speed of pump 
-                                             //     again, the round is to prevent user error. std input of 500 or 3000 will not utilize round function
+  return 500;
 }
 
 void Benchtop::write_out(File & myFile) {

@@ -25,8 +25,8 @@
 /*****     microSD Card Vars     *****/
 #define _sd 53
 File myFile;
-String sample_name = "FAKE";
-String file_name = "test.txt";
+String sample_name = "sample";
+String file_name = "sample.txt";
 
 
 

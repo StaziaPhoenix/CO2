@@ -189,6 +189,12 @@ float Benchtop::get_integration_time() {
 
 
 /**********     PUBLIC FUNCTIONS     **********/
+
+
+void Benchtop::flush(Pump & syringe) {
+  syringe.set_valve_dirs(LOW,LOW);  // Open both input valve and output valve
+  syringe.pump(500,OUT);            //Drain the pump and plumbing
+}
 /*
  * Rinse state
  */
@@ -261,7 +267,7 @@ void Benchtop::empty_rinse() {
 /*
  * Start analysis
  */
-void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile) {
+void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,Pinch & acid_pump, File & myFile) {
   unsigned int start_time=millis();
   int check_time=start_time;
   int last_time=start_time;
@@ -283,9 +289,11 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, F
   
   // TODO: actuate acid pump; push acid_volume into stripping chamber; has delay
   if (debug) Serial.println("Pumping acid into strip chamber");
-  digitalWrite(acid_pump, HIGH);
+//  digitalWrite(acid_pump, HIGH);
+  acid_pump.open();
   delay(2000);
-  digitalWrite(acid_pump, LOW);
+//  digitalWrite(acid_pump, LOW);
+  acid_pump.close();
   // END ACID PUMP - ASK ABOUT THIS
 
   if (debug) Serial.println("Waiting to detect");

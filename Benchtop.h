@@ -140,7 +140,12 @@ class Benchtop {
         /*
          * Start analysis
          */
-        void analysis(Pinch & strip,Pump & syringe,K30 & k30,byte acid_pump, File & myFile);
+        void analysis(Pinch & strip,Pump & syringe,K30 & k30,Pinch & acid_pump, File & myFile);
+
+        /*
+         * Flush pump (control syringe)
+         */
+        void flush(Pump & syringe);
     
     private:
         byte debug = 1;

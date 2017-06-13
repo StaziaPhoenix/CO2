@@ -75,7 +75,7 @@ setter setters[9] = { &Benchtop::set_syringe_rinse_speed,
 
 Pump control_syringe(cs_mtr_drv,cs_mtr_dir,cs_input_pin,cs_output_pin); // Initialize pump object
 
-/*****     Relay for Strip Chamber (sc)     *****/
+/*****     Relay for Acid Pump     *****/
 #define acid_pump_drv 9
 
 Pinch acid_pump(acid_pump_drv); // Initialize acid pump object
@@ -180,7 +180,7 @@ void print_cmd_list() {
     Serial.print("\t<r>\tRun\n");
     Serial.print("\t<c>\tClean\n");
     Serial.print("\t<0>\tTest Syringe Pump\n");
-    Serial.print("\t<1>\tTest Air Pump\n");
+    Serial.print("\t<1>\tTest Relays (Acid pump and strip chamber)\n");
     Serial.print("\t<2>\tTest K30\n");
     Serial.print("\t<h>\tPrint Command List\n");
     Serial.println();
@@ -233,7 +233,9 @@ void do_serial_cmd(byte cmd) {
           print_new_cmd_line();
           break;
         case('c'): // run cleaning cycle
-          Serial.println(NOT_YET_STR);
+          Serial.println("BEGIN RINSE\n");
+          benchtop.rinse(strip_chamber,control_syringe);
+          Serial.println("\nEND RINSE\n");
           print_new_cmd_line();
           break;
         case('0'): // test the syringe pump system
@@ -242,8 +244,15 @@ void do_serial_cmd(byte cmd) {
           }
           print_new_cmd_line();
           break;
-        case('1'): // test the air pump system
-          print_new_cmd_line();
+        case('1'): // test the relays
+          Serial.println("TURNING ON ACID PUMP");
+          acid_pump.on();
+          Serial.println("TURNING OFF ACID PUMP");
+          acid_pump.off();
+          Serial.println("OPENING STRIP CHAMBER TO WASTE");
+          strip_chamber.on();
+          Serial.println("CLOSING STRIP CHAMBER TO WASTE (OPEN TO SAMPLE)");
+          strip_chamber.off();
           break;
         case('2'): // test the k30
           for (int i = 0; i < 5; i++) {

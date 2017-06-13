@@ -247,13 +247,13 @@ void do_serial_cmd(byte cmd) {
           break;
         case('1'): // test the relays
           Serial.println("TURNING ON ACID PUMP");
-          acid_pump.on();
+          acid_pump.open();
           Serial.println("TURNING OFF ACID PUMP");
-          acid_pump.off();
+          acid_pump.close();
           Serial.println("OPENING STRIP CHAMBER TO WASTE");
-          strip_chamber.on();
+          strip_chamber.open();
           Serial.println("CLOSING STRIP CHAMBER TO WASTE (OPEN TO SAMPLE)");
-          strip_chamber.off();
+          strip_chamber.close();
           break;
         case('2'): // test the k30
           for (int i = 0; i < 5; i++) {

@@ -160,6 +160,7 @@ class Benchtop {
         float syringe_sample_speed;
         float sample_wait_time;
         float integration_time;
+        int BASE_DELAY = 11;
         
 //        Vector<unsigned long> result_vec;   // TODO: MAKE THIS SMALLER?
         Vector<int> result_vec;

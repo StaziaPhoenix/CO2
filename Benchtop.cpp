@@ -193,7 +193,7 @@ float Benchtop::get_integration_time() {
 
 void Benchtop::flush(Pump & syringe) {
   syringe.set_valve_dirs(LOW,LOW);  // Open both input valve and output valve
-  syringe.pump(500,OUT);            //Drain the pump and plumbing
+  syringe.pump(500,11,OUT);            //Drain the pump and plumbing
 }
 /*
  * Rinse state
@@ -246,7 +246,7 @@ void Benchtop::strip_chamber(Pump & pump,bool sample,bool strip) {
  */
 void Benchtop::fill_rinse(Pump & pump) {
   if (debug) Serial.println("\t\tPumping In");
-  pump.pump(vol_2_steps(rinse_volume),IN);
+  pump.pump(vol_2_steps(rinse_volume),BASE_DELAY,IN);
 }
 
 /*
@@ -254,7 +254,7 @@ void Benchtop::fill_rinse(Pump & pump) {
  */
 void Benchtop::rinse_stripping_chamber(Pump & pump) {
   if (debug) Serial.println("\t\tPumping Out");
-  pump.pump(spd_2_steps(syringe_sample_speed),OUT);
+  pump.pump(vol_2_steps(sample_volume),spd_2_delay(syringe_sample_speed),OUT);
 }
 
 /*
@@ -359,9 +359,9 @@ void Benchtop::analysis(Pinch & strip,Pump & syringe,K30 & k30,Pinch & acid_pump
   integration_start_time=check_time=millis();
 
   if (debug) Serial.println("Pumping sample into stripping chamber");
-  for(int i=0;i<spd_2_steps(syringe_sample_speed);i++) { //???????????? pump full volume at normal speed
+  for(int i=0;i<spd_2_delay(syringe_sample_speed);i++) { //???????????? pump full volume at normal speed
     //if (debug) Serial.println("\tSPHECIAL PUMPIN IT...");
-    syringe.special_pump(OUT);
+    syringe.special_pump(spd_2_delay(syringe_sample_speed),OUT);
     last_time=millis()-check_time;
     if(last_time > _2seconds) {
       if (debug) Serial.print("\tDETECTING...");
@@ -445,7 +445,7 @@ void Benchtop::record_sample_temp() {
  */
 void Benchtop::fill_sample(Pump & pump) {
   if (debug) Serial.println("\t\tPumping IN");
-  pump.pump(vol_2_steps(sample_volume),IN);
+  pump.pump(vol_2_steps(sample_volume),BASE_DELAY,IN);
 }
 
 /*
@@ -459,7 +459,7 @@ void Benchtop::start_peak_integration() {
  * Sample stripping chamber during analysis
  */
 void Benchtop::sample_stripping_chamber(Pump & pump) {
-  pump.pump(spd_2_steps(syringe_sample_speed),OUT);
+  pump.pump(vol_2_steps(sample_volume),spd_2_delay(syringe_sample_speed),OUT);
 }
 
 /*
@@ -474,7 +474,7 @@ int Benchtop::vol_2_steps(float volume) { // TODO: CALCULATE THIS SHIT
   return 500; 
 }
 
-int Benchtop::spd_2_steps(float spd) { // TODO: CALCULATE THIS SHIT
+int Benchtop::spd_2_delay(float spd) { // TODO: CALCULATE THIS SHIT
 //  return spd;
   return 500;
 }

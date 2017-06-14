@@ -11,7 +11,7 @@ We did not have much opportunity to test, so we relied mostly on debug statement
 Our Recommendations for Improving the Codebase:
 
 1. You may want to fix the object naming - for example, we have a pinch valve and acid pump which both operate via a relay, so in code we made them both Pinch objects. However, that doesn't functionally make sense, and you may want to make a dedicated acid_pump object (even though it is just a digital pin).
-2. Regarding the Pinch Valve: it is not in the final protable system. Instead, according the flowhart from benchtop it uses valves the same way that the syringe pump. However, our quarter did not get that set up, and we have it temporarily operating as a pinch valve in order to work with the hybrid system set up. Depending on how your quarter progresses, you may need to switch it back to a pump object like the control syringe so that you can operate it with valves.
+2. Regarding the Pinch Valve: it is not in the final portable system. Instead, according the flowchart from Benchtop, it uses valves the same way as the syringe pump. However, our quarter did not get that set up, and we have it temporarily operating as a pinch valve in order to work with the hybrid system set up for us. Depending on how your quarter progresses, you may need to switch it back to a pump object like the control syringe so that you can operate it with valves.
 
 
 You may contact us at...
